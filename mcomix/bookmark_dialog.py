@@ -146,8 +146,7 @@ class _BookmarksDialog(Gtk.Dialog):
         bookmark2 = treemodel.get_value(iter2, 5)
 
         for field in user_data:
-            result = cmp(getattr(bookmark1, field),
-                getattr(bookmark2, field))
+            result = (getattr(bookmark1, field) > getattr(bookmark2, field)) - (getattr(bookmark1, field) < getattr(bookmark2, field))
             if result != 0:
                 return result
 

@@ -48,7 +48,7 @@ def alphanumeric_compare(s1, s2):
         if part.isdigit():
             stringparts2[i] = int(part)
 
-    return cmp(stringparts1, stringparts2)
+    return (stringparts1 > stringparts2) - (stringparts1 < stringparts2)
 
 def bin_search(lst, value):
     """ Binary search for sorted list C{lst}, looking for C{value}.
