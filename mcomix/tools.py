@@ -70,7 +70,7 @@ def get_home_directory():
     sub-directory of <Documents and Settings/Username>.
     """
     if sys.platform == 'win32':
-        return os.path.join(os.path.expanduser('~'), 'MComix')
+        return os.path.join(os.path.expanduser('~'), 'MComix3')
     else:
         return os.path.expanduser('~')
 

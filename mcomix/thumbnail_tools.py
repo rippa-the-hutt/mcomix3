@@ -200,7 +200,7 @@ class Thumbnailer(object):
             'tEXt::Thumb::Mimetype':      mime,
             'tEXt::Thumb::Image::Width':  str(width),
             'tEXt::Thumb::Image::Height': str(height),
-            'tEXt::Software':             'MComix %s' % constants.VERSION
+            'tEXt::Software':             'MComix3 %s' % constants.VERSION
         }
 
     def _save_thumbnail(self, pixbuf, thumbpath, tEXt_data):

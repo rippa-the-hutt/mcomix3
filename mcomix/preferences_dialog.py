@@ -188,7 +188,7 @@ class _PreferencesDialog(Gtk.Dialog):
         page.add_row(self._create_pref_check_button(
             _('Automatically open the last viewed file on startup'),
             'auto load last file',
-            _('Automatically open, on startup, the file that was open when MComix was last closed.')))
+            _('Automatically open, on startup, the file that was open when MComix3 was last closed.')))
 
         page.add_row(Gtk.Label(_('Store information about recently opened files:')),
             self._create_store_recent_combobox())
@@ -555,7 +555,7 @@ class _PreferencesDialog(Gtk.Dialog):
 
         box = self._create_combobox(items, selection, self._store_recent_changed_cb)
         box.set_tooltip_text(
-            _('Add information about all files opened from within MComix to the shared recent files list.'))
+            _('Add information about all files opened from within MComix3 to the shared recent files list.'))
         return box
 
     def _store_recent_changed_cb(self, combobox, *args):
