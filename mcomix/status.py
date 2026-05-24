@@ -117,11 +117,11 @@ class Statusbar(gtk.EventBox):
 
     def set_root(self, root):
         """Set the name of the root (directory or archive)."""
-        self._root = i18n.to_unicode(root)
+        self._root = i18n.to_str(root)
 
     def set_filename(self, filename):
         """Update the filename."""
-        self._filename = i18n.to_unicode(filename)
+        self._filename = i18n.to_str(filename)
 
     def set_filesize(self, size):
         """Update the filesize."""
@@ -203,7 +203,7 @@ class Statusbar(gtk.EventBox):
                 event.button, event.time)
 
     def _update_sensitivity(self):
-        """ Updates the action menu's sensitivity based on user preferences. """
+        """ Updates the action men's sensitivity based on user preferences. """
 
         page_visible = prefs['statusbar fields'] & constants.STATUS_PAGE
         fileno_visible = prefs['statusbar fields'] & constants.STATUS_FILENUMBER

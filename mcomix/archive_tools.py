@@ -11,6 +11,8 @@ import operator
 from mcomix import image_tools
 from mcomix import constants
 from mcomix import log
+from functools import reduce
+
 from mcomix.archive import (
     lha_external,
     pdf_external,
@@ -176,7 +178,7 @@ def get_archive_info(path):
     """
     cleanup = []
     try:
-        tmpdir = tempfile.mkdtemp(prefix=u'mcomix_archive_info.')
+        tmpdir = tempfile.mkdtemp(prefix='mcomix_archive_info.')
         cleanup.append(lambda: shutil.rmtree(tmpdir, True))
 
         mime = archive_mime_type(path)

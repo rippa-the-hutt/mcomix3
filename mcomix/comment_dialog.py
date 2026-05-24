@@ -57,7 +57,7 @@ class _CommentsDialog(gtk.Dialog):
         self._notebook = notebook
         self._comments = {}
 
-        for num in xrange(1, self._window.filehandler.get_number_of_comments() + 1):
+        for num in range(1, self._window.filehandler.get_number_of_comments() + 1):
             path = self._window.filehandler.get_comment_name(num)
             if self._window.filehandler.file_is_available(path):
                 self._add_comment(path, num)
@@ -92,14 +92,14 @@ class _CommentsDialog(gtk.Dialog):
             text = _('Could not read %s') % name
 
         text_buffer = gtk.TextBuffer(self._tag_table)
-        text_buffer.set_text(i18n.to_unicode(text))
+        text_buffer.set_text(i18n.to_str(text))
         text_buffer.apply_tag(self._tag, *text_buffer.get_bounds())
         text_view = gtk.TextView(text_buffer)
         inbox.add(text_view)
 
         bg_color = text_view.get_default_attributes().bg_color
         outbox.modify_bg(gtk.STATE_NORMAL, bg_color)
-        tab_label = gtk.Label(i18n.to_unicode(name))
+        tab_label = gtk.Label(i18n.to_str(name))
         self._notebook.insert_page(page, tab_label)
 
 

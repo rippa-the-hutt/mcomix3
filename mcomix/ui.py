@@ -227,7 +227,7 @@ class MainUI(gtk.UIManager):
                 <toolitem action="lens" />
             </toolbar>
 
-            <menubar name="Menu">
+            <menubar name="Men">
                 <menu action="menu_file">
                     <menuitem action="open" />
                     <menu action="menu_recent" />

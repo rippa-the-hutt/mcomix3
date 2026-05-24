@@ -67,7 +67,7 @@ for pkgname in (
 # Add DLLs license and readme files.
 
 license_dir = 'C:/Python27/Lib/site-packages/gnome/license'
-doc_rx = re.compile('^(.*)\.(COPYING|LICENSE|README)(\..*)?$')
+doc_rx = re.compile(r'^(.*)\.(COPYING|LICENSE|README)(\..*)?$')
 lib_list = [os.path.basename(dll) for dll in dll_list]
 for entry in os.listdir(license_dir):
     m = doc_rx.match(entry)

@@ -16,10 +16,10 @@ class ZipArchive(archive_base.ExternalExecutableArchive):
         return ZipArchive._find_unzip_executable()
 
     def _get_list_arguments(self):
-        return [u'-Z1']
+        return ['-Z1']
 
     def _get_extract_arguments(self):
-        return [u'-p', u'-P', u'']
+        return ['-p', '-P', '']
 
     @staticmethod
     def _find_unzip_executable():
@@ -27,14 +27,14 @@ class ZipArchive(archive_base.ExternalExecutableArchive):
         Returns None on failure. """
         global _zip_executable
         if -1 == _zip_executable:
-            _zip_executable = process.find_executable((u'unzip',))
+            _zip_executable = process.find_executable(('unzip',))
         return _zip_executable
 
     @staticmethod
     def is_available():
         return bool(ZipArchive._find_unzip_executable())
 
-    def _unicode_filename(self, filename, conversion_func=i18n.to_unicode):
+    def _unicode_filename(self, filename, conversion_func=i18n.to_str):
         unicode_name = conversion_func(filename)
         safe_name = self._replace_invalid_filesystem_chars(unicode_name)
         # As it turns out, unzip will try to interpret filenames as glob...

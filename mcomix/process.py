@@ -27,7 +27,7 @@ STDOUT = subprocess.STDOUT
 def _fix_args(args):
     fixed_args = []
     for arg in args:
-        if isinstance(arg, unicode):
+        if isinstance(arg, str):
             fixed_args.append(arg.encode(sys.getfilesystemencoding()))
         else:
             fixed_args.append(arg)
@@ -209,7 +209,7 @@ def Win32Popen(cmd):
         return processinfo.dwProcessId
     else:
         raise ctypes.WinError(ctypes.GetLastError(),
-                i18n.to_unicode(ctypes.FormatError()))
+                i18n.to_str(ctypes.FormatError()))
 
 
 # vim: expandtab:sw=4:ts=4

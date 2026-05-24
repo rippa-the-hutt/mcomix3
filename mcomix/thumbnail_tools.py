@@ -70,7 +70,7 @@ class Thumbnailer(object):
         self.force_recreation = force_recreation
         self.archive_support = archive_support
 
-    def thumbnail(self, filepath, async=False):
+    def thumbnail(self, filepath, asynch=False):
         """ Returns a thumbnail pixbuf for <filepath>, transparently handling
         both normal image files and archives. If a thumbnail file already exists,
         it is re-used. Otherwise, a new thumbnail is created from <filepath>.
@@ -90,7 +90,7 @@ class Thumbnailer(object):
             return pixbuf
 
         else:
-            if async:
+            if asynch:
                 thread = threading.Thread(target=self._create_thumbnail, args=(filepath,))
                 thread.name += '-thumbnailer'
                 thread.setDaemon(True)
@@ -113,7 +113,7 @@ class Thumbnailer(object):
         if os.path.isfile(thumbpath):
             try:
                 os.remove(thumbpath)
-            except IOError, error:
+            except IOError as error:
                 log.error(_("! Could not remove file \"%s\""), thumbpath)
                 log.error(error)
 
@@ -128,7 +128,7 @@ class Thumbnailer(object):
         if mime is not None:
             cleanup = []
             try:
-                tmpdir = tempfile.mkdtemp(prefix=u'mcomix_archive_thumb.')
+                tmpdir = tempfile.mkdtemp(prefix='mcomix_archive_thumb.')
                 cleanup.append(lambda: shutil.rmtree(tmpdir, True))
                 archive = archive_tools.get_recursive_archive_handler(filepath,
                                                                       tmpdir,
@@ -151,7 +151,7 @@ class Thumbnailer(object):
                 if self.store_on_disk:
                     tEXt_data = self._get_text_data(image_path)
                     # Use the archive's mTime instead of the extracted file's mtime
-                    tEXt_data['tEXt::Thumb::MTime'] = str(long(os.stat(filepath).st_mtime))
+                    tEXt_data['tEXt::Thumb::MTime'] = str(int(os.stat(filepath).st_mtime))
                 else:
                     tEXt_data = None
 
@@ -190,7 +190,7 @@ class Thumbnailer(object):
         uri = portability.uri_prefix() + pathname2url(i18n.to_utf8(os.path.normpath(filepath)))
         stat = os.stat(filepath)
         # MTime could be floating point number, so convert to long first to have a fixed point number
-        mtime = str(long(stat.st_mtime))
+        mtime = str(int(stat.st_mtime))
         size = str(stat.st_size)
         format, width, height = image_tools.get_image_info(filepath)
         return {
@@ -210,14 +210,14 @@ class Thumbnailer(object):
         try:
             directory = os.path.dirname(thumbpath)
             if not os.path.isdir(directory):
-                os.makedirs(directory, 0700)
+                os.makedirs(directory, 0o700)
             if os.path.isfile(thumbpath):
                 os.remove(thumbpath)
 
             pixbuf.save(thumbpath, 'png', tEXt_data)
-            os.chmod(thumbpath, 0600)
+            os.chmod(thumbpath, 0o600)
 
-        except Exception, ex:
+        except Exception as ex:
             log.warning( _('! Could not save thumbnail "%(thumbpath)s": %(error)s'),
                 { 'thumbpath' : thumbpath, 'error' : ex } )
 
@@ -239,9 +239,9 @@ class Thumbnailer(object):
                     return False
 
                 info = img.info
-                stored_mtime = long(info['Thumb::MTime'])
+                stored_mtime = int(info['Thumb::MTime'])
                 # The source file might no longer exist
-                file_mtime = os.path.isfile(filepath) and long(os.stat(filepath).st_mtime) or stored_mtime
+                file_mtime = os.path.isfile(filepath) and int(os.stat(filepath).st_mtime) or stored_mtime
                 return stored_mtime == file_mtime and \
                     max(*img.size) == max(self.width, self.height)
             else:
@@ -266,14 +266,14 @@ class Thumbnailer(object):
         cover of an archive using some simple heuristics.
         """
         # Ignore MacOSX meta files.
-        files = itertools.ifilter(lambda filename:
-                u'__MACOSX' not in os.path.normpath(filename).split(os.sep),
+        files = filter(lambda filename:
+                '__MACOSX' not in os.path.normpath(filename).split(os.sep),
                 files)
         # Ignore credit files if possible.
-        files = itertools.ifilter(lambda filename:
-                u'credit' not in os.path.split(filename)[1].lower(), files)
+        files = filter(lambda filename:
+                'credit' not in os.path.split(filename)[1].lower(), files)
 
-        images = list(itertools.ifilter(image_tools.SUPPORTED_IMAGE_REGEX.search, files))
+        images = list(filter(image_tools.SUPPORTED_IMAGE_REGEX.search, files))
 
         tools.alphanumeric_sort(images)
 

@@ -36,7 +36,7 @@ class _CollectionArea(gtk.ScrolledWindow):
         self._treeview.connect_after('drag_begin', self._drag_begin)
         self._treeview.connect('button_press_event', self._button_press)
         self._treeview.connect('key_press_event', self._key_press)
-        self._treeview.connect('popup_menu', self._popup_menu)
+        self._treeview.connect('popup_men', self._popup_menu)
         self._treeview.connect('row_activated', self._expand_or_collapse_row)
         self._treeview.set_headers_visible(False)
         self._treeview.set_rules_hint(True)

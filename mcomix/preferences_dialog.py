@@ -43,7 +43,7 @@ class _PreferencesDialog(gtk.Dialog):
         appearance = self._init_appearance_tab()
         notebook.append_page(appearance, gtk.Label(_('Appearance')))
         behaviour = self._init_behaviour_tab()
-        notebook.append_page(behaviour, gtk.Label(_('Behaviour')))
+        notebook.append_page(behaviour, gtk.Label(_('Behavio')))
         display = self._init_display_tab()
         notebook.append_page(display, gtk.Label(_('Display')))
         advanced = self._init_advanced_tab()
@@ -79,10 +79,10 @@ class _PreferencesDialog(gtk.Dialog):
             _('Use this colour as background:'),
             'color box bg',
             _('Always use this selected colour as the background colour.'),
-            _('Use dynamic background colour'),
+            _('Use dynamic background colo'),
             'smart bg',
             _('Automatically pick a background colour that fits the viewed image.'))
-        page.add_row(fixed_bg_button, self._create_color_button('bg colour'))
+        page.add_row(fixed_bg_button, self._create_color_button('bg colo'))
         page.add_row(dynamic_bg_button)
 
         page.new_section(_('Thumbnails'))
@@ -91,10 +91,10 @@ class _PreferencesDialog(gtk.Dialog):
             'Use this colour as the thumbnail background:',
             'color box thumb bg',
             _('Always use this selected colour as the thumbnail background colour.'),
-            'Use dynamic background colour',
+            'Use dynamic background colo',
             'smart thumb bg',
             _('Automatically use the colour that fits the viewed image for the thumbnail background.'))
-        page.add_row(thumb_fixed_bg_button, self._create_color_button('thumb bg colour'))
+        page.add_row(thumb_fixed_bg_button, self._create_color_button('thumb bg colo'))
         page.add_row(thumb_dynamic_bg_button)
 
         page.add_row(self._create_pref_check_button(
@@ -121,7 +121,7 @@ class _PreferencesDialog(gtk.Dialog):
 
     def _init_behaviour_tab(self):
         # ----------------------------------------------------------------
-        # The "Behaviour" tab.
+        # The "Behavio" tab.
         # ----------------------------------------------------------------
         page = preferences_page._PreferencePage(None)
 
@@ -353,30 +353,30 @@ class _PreferencesDialog(gtk.Dialog):
         # Source: http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
         languages = [
             (_('Auto-detect (Default)'), 'auto'),
-            ('Català', 'ca'),  # Catalan
-            ('čeština', 'cs'),  # Czech
+            ('CatalÃ ', 'ca'),  # Catalan
+            ('ÄeÅ¡tina', 'cs'),  # Czech
             ('Deutsch', 'de'),  # German
-            ('ελληνικά', 'el'),  # Greek
+            ('ÎµÎ»Î»Î·Î½Î¹ÎºÎ¬', 'el'),  # Greek
             ('English', 'en'),  # English
-            ('Español', 'es'),  # Spanish
-            ('فارسی', 'fa'),  # Persian
-            ('Français', 'fr'), # French
+            ('EspaÃ±ol', 'es'),  # Spanish
+            ('ÙØ§Ø±Ø³Û', 'fa'),  # Persian
+            ('FranÃ§ais', 'fr'), # French
             ('Galego', 'gl'),  # Galician
-            ('עברית', 'he'),  # Hebrew
+            ('×¢××¨××ª', 'he'),  # Hebrew
             ('Hrvatski jezik', 'hr'),  # Croatian
-            ('Magyar', 'hu'),  # Hungarian
+            ('Magyar', 'h'),  # Hungarian
             ('Bahasa Indonesia', 'id'),  # Indonesian
             ('Italiano', 'it'),  # Italian
-            ('日本語', 'ja'),  # Japanese
-            ('한국어', 'ko'),  # Korean
+            ('æ¥æ¬èª', 'ja'),  # Japanese
+            ('íêµ­ì´', 'ko'),  # Korean
             ('Nederlands', 'nl'),  # Dutch
-            ('Język polski', 'pl'),  # Polish
-            ('Português', 'pt_BR'),  # Portuguese
-            ('pусский язык', 'ru'),  # Russian
+            ('JÄzyk polski', 'pl'),  # Polish
+            ('PortuguÃªs', 'pt_BR'),  # Portuguese
+            ('pÑÑÑÐºÐ¸Ð¹ ÑÐ·ÑÐº', 'r'),  # Russian
             ('Svenska', 'sv'),  # Swedish
-            ('українська мова', 'uk'),  # Ukrainian
-            ('簡體中文', 'zh_CN'),  # Chinese (simplified)
-            ('正體中文', 'zh_TW')]  # Chinese (traditional)
+            ('ÑÐºÑÐ°ÑÐ½ÑÑÐºÐ° Ð¼Ð¾Ð²Ð°', 'uk'),  # Ukrainian
+            ('ç°¡é«ä¸­æ', 'zh_CN'),  # Chinese (simplified)
+            ('æ­£é«ä¸­æ', 'zh_TW')]  # Chinese (traditional)
         languages.sort(key=operator.itemgetter(0))
 
         box = self._create_combobox(languages, prefs['language'],
@@ -723,13 +723,13 @@ class _PreferencesDialog(gtk.Dialog):
         if preference == 'color box bg' and button.get_active():
 
             if not prefs['smart bg'] or not self._window.filehandler.file_loaded:
-                self._window.set_bg_colour(prefs['bg colour'])
+                self._window.set_bg_colour(prefs['bg colo'])
 
         elif preference == 'smart bg' and button.get_active():
 
             # if the color is no longer using the smart background then return it to the chosen color
             if not prefs[preference]:
-                self._window.set_bg_colour(prefs['bg colour'])
+                self._window.set_bg_colour(prefs['bg colo'])
             else:
                 # draw_image() will set the main background to the smart background
                 self._window.draw_image()
@@ -738,9 +738,9 @@ class _PreferencesDialog(gtk.Dialog):
 
             if prefs[preference]:
                 prefs['smart thumb bg'] = False
-                prefs['thumbnail bg uses main colour'] = False
+                prefs['thumbnail bg uses main colo'] = False
 
-                self._window.thumbnailsidebar.change_thumbnail_background_color(prefs['thumb bg colour'])
+                self._window.thumbnailsidebar.change_thumbnail_background_color(prefs['thumb bg colo'])
             else:
                 self._window.draw_image()
 
@@ -748,7 +748,7 @@ class _PreferencesDialog(gtk.Dialog):
 
             if prefs[preference]:
                 prefs['color box thumb bg'] = False
-                prefs['thumbnail bg uses main colour'] = False
+                prefs['thumbnail bg uses main colo'] = False
 
                 pixbuf = image_tools.static_image(image_tools.unwrap_image(
                     self._window.images[0])) # XXX transitional(double page limitation)
@@ -774,18 +774,18 @@ class _PreferencesDialog(gtk.Dialog):
 
         colour = colorbutton.get_color()
 
-        if preference == 'bg colour':
-            prefs['bg colour'] = colour.red, colour.green, colour.blue
+        if preference == 'bg colo':
+            prefs['bg colo'] = colour.red, colour.green, colour.blue
 
             if not prefs['smart bg'] or not self._window.filehandler.file_loaded:
-                self._window.set_bg_colour(prefs['bg colour'])
+                self._window.set_bg_colour(prefs['bg colo'])
 
-        elif preference == 'thumb bg colour':
+        elif preference == 'thumb bg colo':
 
-            prefs['thumb bg colour'] = colour.red, colour.green, colour.blue
+            prefs['thumb bg colo'] = colour.red, colour.green, colour.blue
 
             if not prefs['smart thumb bg'] or not self._window.filehandler.file_loaded:
-                self._window.thumbnailsidebar.change_thumbnail_background_color( prefs['thumb bg colour'] )
+                self._window.thumbnailsidebar.change_thumbnail_background_color( prefs['thumb bg colo'] )
 
 
     def _create_pref_spinner(self, prefkey, scale, lower, upper, step_incr,

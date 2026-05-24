@@ -2,7 +2,7 @@
 
 import gtk
 import ctypes
-import cStringIO
+import io
 import sys
 
 from mcomix import log
@@ -78,7 +78,7 @@ class Clipboard(gtk.Clipboard):
                 ctypes.sizeof(text_buffer))
         # Paste the image as Win32 DIB structure
         pil = image_tools.pixbuf_to_pil(pixbuf)
-        output = cStringIO.StringIO()
+        output = io.BytesIO()
         pil.convert("RGB").save(output, "BMP")
         dibdata = output.getvalue()[14:]
         output.close()

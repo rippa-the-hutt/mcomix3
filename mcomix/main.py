@@ -90,7 +90,7 @@ class MainWindow(gtk.Window):
         self.osd = osd.OnScreenDisplay(self)
         self.zoom = zoom.ZoomModel()
         self.uimanager = ui.MainUI(self)
-        self.menubar = self.uimanager.get_widget('/Menu')
+        self.menubar = self.uimanager.get_widget('/Men')
         self.toolbar = self.uimanager.get_widget('/Tool')
         self.popup = self.uimanager.get_widget('/Popup')
         self.actiongroup = self.uimanager.get_action_groups()[0]
@@ -116,7 +116,7 @@ class MainWindow(gtk.Window):
 
         for img in self.images:
             self._main_layout.put(img, 0, 0)
-        self.set_bg_colour(prefs['bg colour'])
+        self.set_bg_colour(prefs['bg colo'])
 
         self._vadjust.step_increment = 15
         self._vadjust.page_increment = 1
@@ -910,7 +910,7 @@ class MainWindow(gtk.Window):
         self._show_scrollbars([False] * len(self._scroll))
         self.layout = _dummy_layout()
         self._main_layout.set_size(*self.layout.get_union_box().get_size())
-        self.set_bg_colour(prefs['bg colour'])
+        self.set_bg_colour(prefs['bg colo'])
 
     def displayed_double(self):
         """Return True if two pages are currently displayed."""
@@ -961,7 +961,7 @@ class MainWindow(gtk.Window):
                 title += ','
         title += ' / %d]  %s' % (self.imagehandler.get_number_of_pages(),
             self.imagehandler.get_pretty_current_filename())
-        title = i18n.to_unicode(title)
+        title = i18n.to_str(title)
 
         if self.slideshow.is_running():
             title = '[%s] %s' % (_('SLIDESHOW'), title)
@@ -977,8 +977,8 @@ class MainWindow(gtk.Window):
                                                   colour[1],
                                                   colour[2]))
 
-        if prefs['thumbnail bg uses main colour']:
-            self.thumbnailsidebar.change_thumbnail_background_color(prefs['bg colour'])
+        if prefs['thumbnail bg uses main colo']:
+            self.thumbnailsidebar.change_thumbnail_background_color(prefs['bg colo'])
         self._bg_colour = colour
 
     def get_bg_colour(self):
@@ -991,7 +991,7 @@ class MainWindow(gtk.Window):
             archive_name = self.filehandler.get_pretty_current_filename()
             file_name = self.imagehandler.get_path_to_page()
             suggested_name = os.path.splitext(archive_name)[0] + \
-                u'_' + os.path.split(file_name)[-1]
+                '_' + os.path.split(file_name)[-1]
         else:
             suggested_name = os.path.split(self.imagehandler.get_path_to_page())[-1]
 
@@ -1059,18 +1059,18 @@ class MainWindow(gtk.Window):
         if not self.filehandler.file_loaded:
             return
 
-        text = u''
+        text = ''
         filename = self.imagehandler.get_pretty_current_filename()
         if filename:
-            text += u'%s\n' % filename
+            text += '%s\n' % filename
         file_number, file_count = self.filehandler.get_file_number()
         if file_count:
-            text += u'(%d / %d)\n' % (file_number, file_count)
+            text += '(%d / %d)\n' % (file_number, file_count)
         else:
-            text += u'\n'
+            text += '\n'
         page_number = self.imagehandler.get_current_page()
         if page_number:
-            text += u'%s %s' % (_('Page'), page_number)
+            text += '%s %s' % (_('Page'), page_number)
         text = text.strip('\n')
         if text:
             self.osd.show(text)

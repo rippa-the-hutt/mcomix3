@@ -20,28 +20,21 @@ def print_(*args, **options):
     Prints <args>, with each argument separeted by sep=' ' and ending with
     end='\n'.
 
-    It converts any text to the encoding used by STDOUT, and replaces problematic
-    characters with underscore. Prevents UnicodeEncodeErrors and similar when
-    using print on non-ASCII strings, on systems not using UTF-8 as default encoding.
+    In Python 3, sys.stdout handles encoding internally.
+    All arguments are converted to str first via i18n.to_str.
     """
 
-    args = [ i18n.to_unicode(val) for val in args ]
+    args = [ i18n.to_str(val) for val in args ]
 
     if 'sep' in options: sep = options['sep']
-    else: sep = u' '
+    else: sep = ' '
     if 'end' in options: end = options['end']
-    else: end = u'\n'
+    else: end = '\n'
 
     def print_generic(text):
+        # In Python 3, sys.stdout expects str and handles encoding internally.
         if text:
-            if (sys.stdout and
-                hasattr(sys.stdout, 'encoding') and
-                sys.stdout.encoding is not None):
-                encoding = sys.stdout.encoding
-            else:
-                encoding = locale.getpreferredencoding() or sys.getfilesystemencoding()
-
-            sys.stdout.write(text.encode(encoding, 'replace'))
+            sys.stdout.write(text)
 
     def print_win32(text):
         if not text: return

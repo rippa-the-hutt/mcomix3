@@ -2,7 +2,7 @@
 write them.  """
 
 import os
-import cPickle
+import pickle
 import json
 
 from mcomix import constants
@@ -20,11 +20,11 @@ prefs = {
     'sort order': constants.SORT_ASCENDING,
     'sort archive by': constants.SORT_NAME,  # Files in archives
     'sort archive order': constants.SORT_ASCENDING,
-    'bg colour': [5000, 5000, 5000],
-    'thumb bg colour': [5000, 5000, 5000],
+    'bg colo': [5000, 5000, 5000],
+    'thumb bg colo': [5000, 5000, 5000],
     'smart bg': False,
     'smart thumb bg': False,
-    'thumbnail bg uses main colour': False,
+    'thumbnail bg uses main colo': False,
     'checkered bg for transparent images': True,
     'cache': True,
     'stretch': False,

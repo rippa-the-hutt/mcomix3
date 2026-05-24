@@ -6,7 +6,7 @@ import shutil
 import tempfile
 import threading
 import re
-import cPickle
+import pickle
 import gtk
 
 from mcomix.preferences import prefs
@@ -97,9 +97,9 @@ class FileHandler(object):
 
         try:
             path = self._initialize_fileprovider(path, keep_fileprovider)
-        except ValueError, ex:
-            self._window.statusbar.set_message(unicode(ex))
-            self._window.osd.show(unicode(ex))
+        except ValueError as ex:
+            self._window.statusbar.set_message(str(ex))
+            self._window.osd.show(str(ex))
             return False
 
         error_message = self._check_access(path)
@@ -122,9 +122,9 @@ class FileHandler(object):
         if self.archive_type is not None:
             try:
                 self._open_archive(self._current_file)
-            except Exception, ex:
-                self._window.statusbar.set_message(unicode(ex))
-                self._window.osd.show(unicode(ex))
+            except Exception as ex:
+                self._window.statusbar.set_message(str(ex))
+                self._window.osd.show(str(ex))
                 self.file_opened()
                 return False
             self.file_loading = True
@@ -278,7 +278,7 @@ class FileHandler(object):
 
         @return: A tuple containing C{(image_files, image_index)}. """
 
-        self._tmp_dir = tempfile.mkdtemp(prefix=u'mcomix.', suffix=os.sep)
+        self._tmp_dir = tempfile.mkdtemp(prefix='mcomix.', suffix=os.sep)
         self._base_path = path
         try:
             self._condition = self._extractor.setup(self._base_path,
@@ -298,7 +298,7 @@ class FileHandler(object):
         archive_images = [image for image in files
             if self._image_re.search(image)
             # Remove MacOS meta files from image list
-            and not u'__MACOSX' in os.path.normpath(image).split(os.sep)]
+            and not '__MACOSX' in os.path.normpath(image).split(os.sep)]
 
         self._sort_archive_images(archive_images)
         image_files = [ os.path.join(self._tmp_dir, f)
@@ -601,8 +601,8 @@ class FileHandler(object):
             with self._condition:
                 while not self._extractor.is_ready(name) and not self._stop_waiting:
                     self._condition.wait()
-        except Exception, ex:
-            log.error(u'Waiting on extraction of "%s" failed: %s', path, ex)
+        except Exception as ex:
+            log.error('Waiting on extraction of "%s" failed: %s', path, ex)
             return
 
     def _ask_for_files(self, files):
@@ -656,10 +656,10 @@ class FileHandler(object):
 
                 config.close()
 
-            except Exception, ex:
+            except Exception as ex:
                 log.error(_('! Corrupt preferences file "%s", deleting...'),
                         constants.FILEINFO_PICKLE_PATH )
-                log.info(u'Error was: %s', ex)
+                log.info('Error was: %s', ex)
                 if config is not None:
                     config.close()
                 os.remove(constants.FILEINFO_PICKLE_PATH)

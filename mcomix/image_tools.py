@@ -16,11 +16,12 @@ try:
 except ImportError:
     from PIL import VERSION as PIL_VERSION
     PIL_VERSION = ('PIL', PIL_VERSION)
-from cStringIO import StringIO
+from io import BytesIO as StringIO
 
 from mcomix.preferences import prefs
 from mcomix import constants
 from mcomix import log
+from functools import reduce
 
 
 if sys.platform == 'win32':

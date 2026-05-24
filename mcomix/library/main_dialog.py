@@ -118,7 +118,7 @@ class _LibraryDialog(gtk.Window):
         """
         self._statusbar.pop(0)
         self._statusbar.push(0,
-            ' ' * status.Statusbar.SPACING + '%s' % i18n.to_unicode(message))
+            ' ' * status.Statusbar.SPACING + '%s' % i18n.to_str(message))
 
     def close(self, *args):
         """Close the library and do required cleanup tasks."""

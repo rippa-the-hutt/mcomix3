@@ -124,14 +124,14 @@ class OrderedFileProvider(FileProvider):
                       # Explicitly convert all files to Unicode, even when
                       # os.listdir returns a mixture of byte/unicode strings.
                       # (MComix bug #3424405)
-                      [ i18n.to_unicode(fn) for fn in os.listdir(self.base_dir) ]
+                      [ i18n.to_str(fn) for fn in os.listdir(self.base_dir) ]
                       if should_accept(os.path.join(self.base_dir, filename)) ]
 
             FileProvider.sort_files(files)
 
             return files
         except OSError:
-            log.warning(u'! ' + _('Could not open %s: Permission denied.'), self.base_dir)
+            log.warning('! ' + _('Could not open %s: Permission denied.'), self.base_dir)
             return []
 
     def next_directory(self):

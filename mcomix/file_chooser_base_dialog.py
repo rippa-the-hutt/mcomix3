@@ -104,7 +104,7 @@ class _BaseFileChooserDialog(gtk.Dialog):
                     self.filechooser.set_current_folder(
                         constants.HOME_DIR)
 
-        except Exception, ex: # E.g. broken prefs values.
+        except Exception as ex: # E.g. broken prefs values.
             log.debug(ex)
 
         self.show_all()
@@ -266,7 +266,7 @@ class _BaseFileChooserDialog(gtk.Dialog):
             thumbnailer = thumbnail_tools.Thumbnailer(size=(128, 128),
                                                       archive_support=True)
             thumbnailer.thumbnail_finished += self._preview_thumbnail_finished
-            thumbnailer.thumbnail(path, async=True)
+            thumbnailer.thumbnail(path, asynch=True)
         else:
             self._preview_image.clear()
             self._namelabel.set_text('')

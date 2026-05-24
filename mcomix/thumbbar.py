@@ -81,7 +81,7 @@ class ThumbnailSidebar(gtk.ScrolledWindow):
         self._treeview.set_can_focus(False)
 
         self.add(self._treeview)
-        self.change_thumbnail_background_color(prefs['thumb bg colour'])
+        self.change_thumbnail_background_color(prefs['thumb bg colo'])
         self.show_all()
 
         self._window.page_changed += self._on_page_change

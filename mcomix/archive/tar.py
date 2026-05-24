@@ -27,7 +27,7 @@ class TarArchive(archive_base.NonUnicodeArchive):
         self.tar = tarfile.open(self.archive, 'r')
         self._contents = []
         while True:
-            info = self.tar.next()
+            info = next(self.tar)
             if info is None:
                 break
             name = self._unicode_filename(info.name)

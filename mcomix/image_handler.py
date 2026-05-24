@@ -65,7 +65,7 @@ class ImageHandler(object):
                 pixbuf = image_tools.load_pixbuf(self._image_files[index])
                 self._raw_pixbufs[index] = pixbuf
                 tools.garbage_collect()
-            except Exception, e:
+            except Exception as e:
                 self._raw_pixbufs[index] = image_tools.MISSING_IMAGE_ICON
                 log.error('Could not load pixbuf for page %u: %r', index + 1, e)
         else:
@@ -134,7 +134,7 @@ class ImageHandler(object):
 
     def _cache_pixbuf(self, wanted):
         priority, index = wanted
-        log.debug('Caching page %u', index + 1)
+        log.debug('Caching page %', index + 1)
         self._get_pixbuf(index)
 
     def set_page(self, page_num):
@@ -329,11 +329,11 @@ class ImageHandler(object):
                 try:
                     first = tools.format_byte_size(os.stat(first_path).st_size)
                 except OSError:
-                    first = u''
+                    first = ''
                 try:
                     second = tools.format_byte_size(os.stat(second_path).st_size)
                 except OSError:
-                    second = u''
+                    second = ''
             else:
                 return
             return first, second
@@ -341,7 +341,7 @@ class ImageHandler(object):
         try:
             size = tools.format_byte_size(os.stat(first_path).st_size)
         except OSError:
-            size = u''
+            size = ''
 
         return size
 
@@ -358,9 +358,9 @@ class ImageHandler(object):
                 os.path.basename(img_file)
             )
         else:
-            name = u''
+            name = ''
 
-        return i18n.to_unicode(name)
+        return i18n.to_str(name)
 
     def get_size(self, page=None):
         """Return a tuple (width, height) with the size of <page>. If <page>
@@ -433,7 +433,7 @@ class ImageHandler(object):
             # Asked for check only...
             return False
 
-        log.debug('Waiting for page %u', page)
+        log.debug('Waiting for page %', page)
         path = self.get_path_to_page(page)
         self._window.filehandler._wait_on_file(path)
         return True
@@ -455,7 +455,7 @@ class ImageHandler(object):
         else:
             num_pages = self._cache_pages
 
-        page_list = [page - 1 - page_width + n for n in xrange(num_pages)]
+        page_list = [page - 1 - page_width + n for n in range(num_pages)]
 
         # Current and next page first, followed by previous page.
         previous_page = page_list[0:page_width]

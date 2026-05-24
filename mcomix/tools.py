@@ -7,6 +7,7 @@ import gc
 import bisect
 import operator
 import math
+from functools import reduce
 
 
 NUMERIC_REGEXP = re.compile(r"\d+|\D+")  # Split into numerics and characters

@@ -19,11 +19,11 @@ from mcomix import constants
 # functions other than the global _() if necessary
 _translation = None
 
-def to_unicode(string):
+def to_str(string):
     """Convert <string> to unicode. First try the default filesystem
     encoding, and then fall back on some common encodings.
     """
-    if isinstance(string, unicode):
+    if isinstance(string, str):
         return string
 
     # Try chardet heuristic
@@ -40,7 +40,7 @@ def to_unicode(string):
         'latin-1'):
 
         try:
-            ustring = unicode(string, encoding)
+            ustring = str(string, encoding)
             return ustring
 
         except (UnicodeError, LookupError):
@@ -49,11 +49,11 @@ def to_unicode(string):
     return string.decode('utf-8', 'replace')
 
 def to_utf8(string):
-    """ Helper function that converts unicode objects to UTF-8 encoded
-    strings. Non-unicode strings are assumed to be already encoded
+    """ Helper function that converts str objects to UTF-8 encoded
+    bytes. Non-str objects are assumed to be already encoded
     and returned as-is. """
 
-    if isinstance(string, unicode):
+    if isinstance(string, str):
         return string.encode('utf-8')
     else:
         return string
@@ -92,7 +92,7 @@ def install_gettext():
                     pkg_resources.resource_stream('mcomix.messages', resource))
             break
 
-    translation.install(unicode=True)
+    translation.install()
 
     global _translation
     _translation = translation

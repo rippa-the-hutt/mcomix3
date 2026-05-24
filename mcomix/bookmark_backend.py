@@ -1,7 +1,7 @@
 """bookmark_backend.py - Bookmarks handler."""
 
 import os
-import cPickle
+import pickle
 import gtk
 import operator
 import datetime
@@ -125,12 +125,12 @@ class __BookmarksStore(object):
 
         path = constants.BOOKMARK_PICKLE_PATH
         bookmarks = []
-        mtime = 0L
+        mtime = 0
 
         if os.path.isfile(path):
             fd = None
             try:
-                mtime = long(os.stat(path).st_mtime)
+                mtime = int(os.stat(path).st_mtime)
                 fd = open(path, 'rb')
                 version = cPickle.load(fd)
                 packs = cPickle.load(fd)
@@ -161,9 +161,9 @@ class __BookmarksStore(object):
         path = constants.BOOKMARK_PICKLE_PATH
         if os.path.isfile(path):
             try:
-                mtime = long(os.stat(path).st_mtime)
+                mtime = int(os.stat(path).st_mtime)
             except IOError:
-                mtime = 0L
+                mtime = 0
 
             if mtime > self._bookmarks_mtime:
                 return True
@@ -187,7 +187,7 @@ class __BookmarksStore(object):
         cPickle.dump(packs, fd, cPickle.HIGHEST_PROTOCOL)
         fd.close()
 
-        self._bookmarks_mtime = long(time.time())
+        self._bookmarks_mtime = int(time.time())
 
 
     def show_replace_bookmark_dialog(self, old_bookmarks, new_page):

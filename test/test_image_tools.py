@@ -9,7 +9,7 @@ import gtk, gobject
 
 from collections import namedtuple
 from PIL import Image, ImageDraw
-from cStringIO import StringIO
+from io import BytesIO as StringIO
 from difflib import unified_diff
 
 from . import MComixTest, get_testfile_path
@@ -228,8 +228,8 @@ class ImageToolsTest(object):
             self.assertImagesEqual(pixbuf, im, msg=msg)
 
     def test_load_pixbuf_modes(self):
-        tmp_file = tempfile.NamedTemporaryFile(prefix=u'image.',
-                                               suffix=u'.png', delete=False)
+        tmp_file = tempfile.NamedTemporaryFile(prefix='image.',
+                                               suffix='.png', delete=False)
         tmp_file.close()
         base_im = Image.open(get_image_path('transparent.png'))
         for supported, expected_pixbuf_mode, mode in _IMAGE_MODES:
@@ -332,8 +332,8 @@ class ImageToolsTest(object):
         image_size = (2063, 3131)
         target_size = (500, 500)
         expected_size = (329, 500)
-        tmp_file = tempfile.NamedTemporaryFile(prefix=u'image.',
-                                               suffix=u'.png', delete=False)
+        tmp_file = tempfile.NamedTemporaryFile(prefix='image.',
+                                               suffix='.png', delete=False)
         tmp_file.close()
         im = Image.new('RGB', image_size)
         im.save(tmp_file.name)
@@ -384,7 +384,7 @@ class ImageToolsTest(object):
             self.assertEqual(result, expected, msg=msg)
 
     def test_get_image_info_invalid(self):
-        expected = (u'Unknown filetype', 0, 0)
+        expected = ('Unknown filetype', 0, 0)
         result = image_tools.get_image_info(os.devnull)
         msg = (
             'get_image_info() on invalid image failed; '
@@ -410,7 +410,7 @@ class ImageToolsTest(object):
             pixbuf = image_tools.load_pixbuf(get_image_path(name))
             rotation = image_tools.get_implied_rotation(pixbuf)
             self.assertEqual(rotation, image.rotation,
-                             msg='get_implied_rotation(%s) failed: %u instead of %u'
+                             msg='get_implied_rotation(%s) failed: %u instead of %'
                              % (image, rotation, image.rotation))
 
     def test_fit_in_rectangle_dimensions(self):

@@ -3,6 +3,7 @@
 from mcomix import constants
 from mcomix.preferences import prefs
 from mcomix import tools
+from functools import reduce
 
 IDENTITY_ZOOM = 1.0
 IDENTITY_ZOOM_LOG = 0

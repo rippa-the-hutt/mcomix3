@@ -72,7 +72,7 @@ class _BookArea(gtk.ScrolledWindow):
         self._iconview.connect('drag_data_received', self._drag_data_received)
         self._iconview.connect('button_press_event', self._button_press)
         self._iconview.connect('key_press_event', self._key_press)
-        self._iconview.connect('popup_menu', self._popup_menu)
+        self._iconview.connect('popup_men', self._popup_menu)
         self._iconview.modify_base(gtk.STATE_NORMAL, gtk.gdk.Color())  # Black.
         self._iconview.enable_model_drag_source(0,
             [('book', gtk.TARGET_SAME_APP, constants.LIBRARY_DRAG_EXTERNAL_ID)],

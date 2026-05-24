@@ -18,7 +18,7 @@ class _AboutDialog(gtk.AboutDialog):
         self.set_program_name(constants.APPNAME)
         self.set_version(constants.VERSION)
         self.set_website('https://sourceforge.net/p/mcomix/wiki/')
-        self.set_copyright('Copyright © 2005-2016')
+        self.set_copyright('Copyright Â© 2005-2016')
 
         icon_data = pkg_resources.resource_string('mcomix.images', 'mcomix.png')
         pixbuf = image_tools.load_pixbuf_data(icon_data)
@@ -26,7 +26,7 @@ class _AboutDialog(gtk.AboutDialog):
 
         comment = \
             _('%s is an image viewer specifically designed to handle comic books.') % \
-            constants.APPNAME + u' ' + \
+            constants.APPNAME + ' ' + \
             _('It reads ZIP, RAR and tar archives, as well as plain image files.')
         self.set_comments(comment)
 
@@ -38,13 +38,13 @@ class _AboutDialog(gtk.AboutDialog):
         self.set_wrap_license(True)
         self.set_license(license)
 
-        authors = [ u'%s: %s' % (name, description) for name, description in strings.AUTHORS ]
+        authors = [ '%s: %s' % (name, description) for name, description in strings.AUTHORS ]
         self.set_authors(authors)
 
-        translators = [ u'%s: %s' % (name, description) for name, description in strings.TRANSLATORS ]
+        translators = [ '%s: %s' % (name, description) for name, description in strings.TRANSLATORS ]
         self.set_translator_credits("\n".join(translators))
 
-        artists = [ u'%s: %s' % (name, description) for name, description in strings.ARTISTS ]
+        artists = [ '%s: %s' % (name, description) for name, description in strings.ARTISTS ]
         self.set_artists(artists)
 
         self.show_all()
