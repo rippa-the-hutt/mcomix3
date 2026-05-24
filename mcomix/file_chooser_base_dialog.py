@@ -185,7 +185,7 @@ class _BaseFileChooserDialog(Gtk.Dialog):
                 mimetype = mimetypes.guess_type(full_path)[0] or 'application/octet-stream'
 
                 if (filter == self._all_files_filter or
-                    filter.filter((full_path.encode('utf-8'),
+                    filter.filter((full_path,
                     None, None, mimetype))):
 
                     yield full_path

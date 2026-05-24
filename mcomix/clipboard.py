@@ -25,7 +25,7 @@ class Clipboard:
         if sys.platform == 'win32':
             self._copy_windows(pixbuf, text)
         else:
-            self._copy_linux(pixbuf, text.encode('utf-8'))
+            self._copy_linux(pixbuf, text)
 
     def copy_page(self, *args):
         """ Copies the currently opened page and pixbuf to clipboard. """

@@ -26,7 +26,7 @@ class WatchListDialog(Gtk.Dialog):
         """
         super(WatchListDialog, self).__init__(_("Library watch list"),
             library, Gtk.DialogFlags.DESTROY_WITH_PARENT | Gtk.DialogFlags.MODAL,
-            (_('_Scan now').encode('utf-8'), WatchListDialog.RESPONSE_SCANNOW,
+            (_('_Scan now'), WatchListDialog.RESPONSE_SCANNOW,
              "Close", Gtk.ResponseType.CLOSE))
 
         #: Stores a reference to the library

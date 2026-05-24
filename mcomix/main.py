@@ -1007,7 +1007,7 @@ class MainWindow(Gtk.Window):
             Gtk.FileChooserAction.SAVE, ("OK", Gtk.ResponseType.ACCEPT,
             "Cancel", Gtk.ResponseType.REJECT))
         save_dialog.set_do_overwrite_confirmation(True)
-        save_dialog.set_current_name(suggested_name.encode('utf-8'))
+        save_dialog.set_current_name(suggested_name)
 
         if save_dialog.run() == Gtk.ResponseType.ACCEPT and save_dialog.get_filename():
             shutil.copy(self.imagehandler.get_path_to_page(),
