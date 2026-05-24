@@ -352,6 +352,7 @@ class MainWindow(Gtk.Window):
                     (widget.show if should_be_visible else widget.hide)()
 
     def _draw_image(self, scroll_to):
+        union_scaled_size = None
 
         self._update_toggles_visibility()
 
@@ -478,10 +479,11 @@ class MainWindow(Gtk.Window):
             if smartthumbbg:
                 self.thumbnailsidebar.change_thumbnail_background_color(bg_colour)
 
-            win = self._main_layout.get_window()
+        win = self._main_layout.get_window()
         if win:
             win.freeze_updates()
 
+        if win and union_scaled_size is not None:
             self._main_layout.set_size(*union_scaled_size)
             content_boxes = self.layout.get_content_boxes()
             for i in range(pixbuf_count):
@@ -509,7 +511,7 @@ class MainWindow(Gtk.Window):
                     index = None
                 self.scroll_to_predefined(destination, index)
 
-            win = self._main_layout.get_window()
+        win = self._main_layout.get_window()
         if win:
             win.thaw_updates()
         else:
@@ -607,7 +609,7 @@ class MainWindow(Gtk.Window):
         self.thumbnailsidebar.hide()
         self.thumbnailsidebar.clear()
         self.uimanager.set_sensitivities()
-        self.set_icon_list(*icons.mcomix_icons())
+        self.set_icon_list(icons.mcomix_icons())
 
     def new_page(self, at_bottom=False):
         """Draw a *new* page correctly (as opposed to redrawing the same

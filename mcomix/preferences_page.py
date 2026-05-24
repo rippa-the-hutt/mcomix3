@@ -27,7 +27,7 @@ class _PreferencePage(Gtk.VBox):
         <header>.
         """
         self._section = preferences_section._PreferenceSection(header, self._right_column_width)
-        self.pack_start(self._section, False, False)
+        self.pack_start(self._section, False, False, 0)
 
     def add_row(self, left_item, right_item=None):
         """Add a row to the page (in the latest section), containing one
@@ -38,10 +38,10 @@ class _PreferencePage(Gtk.VBox):
             left_item.set_alignment(0, 0.5)
 
         if right_item is None:
-            self._section.contentbox.pack_start(left_item)
+            self._section.contentbox.pack_start(left_item, False, True, 0)
         else:
             left_box, right_box = self._section.new_split_vboxes()
-            left_box.pack_start(left_item)
-            right_box.pack_start(right_item)
+            left_box.pack_start(left_item, False, True, 0)
+            right_box.pack_start(right_item, False, True, 0)
 
 # vim: expandtab:sw=4:ts=4

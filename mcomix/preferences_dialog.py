@@ -659,7 +659,7 @@ class _PreferencesDialog(Gtk.Dialog):
 
         box = Gtk.ComboBox(model)
         renderer = Gtk.CellRendererText()
-        box.pack_start(renderer, True)
+        box.pack_start(renderer, True, True, 0)
         box.add_attribute(renderer, "text", 0)
 
         # Set active box option

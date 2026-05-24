@@ -48,7 +48,7 @@ def update(args=[], notification_delay=3, notification_duration=3):
             self._displayed = False
             vbox = Gtk.VBox(spacing=5)
             label = Gtk.Label(_('Updating font cache. This may take a few minutes.'))
-            vbox.pack_start(label)
+            vbox.pack_start(label, False, True, 0)
             self._spinner = Gtk.Spinner()
             vbox.pack_start(self._spinner, expand=False, fill=False)
             vbox.show_all()

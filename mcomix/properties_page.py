@@ -22,14 +22,14 @@ class _Page(Gtk.ScrolledWindow):
 
         self.set_border_width(12)
         topbox = Gtk.HBox(False, 12)
-        self._vbox.pack_start(topbox)
+        self._vbox.pack_start(topbox, False, True, 0)
         self._thumb = Gtk.Image()
         self._thumb.set_size_request(128, 128)
-        topbox.pack_start(self._thumb, False, False)
+        topbox.pack_start(self._thumb, False, False, 0)
         borderbox = Gtk.Frame()
         borderbox.set_shadow_type(Gtk.ShadowType.ETCHED_IN)
         borderbox.set_size_request(-1, 130)
-        topbox.pack_start(borderbox)
+        topbox.pack_start(borderbox, False, True, 0)
         insidebox = Gtk.EventBox()
         insidebox.set_border_width(1)
         insidebox.set_state_flags(Gtk.StateFlags.ACTIVE, True)
@@ -49,7 +49,7 @@ class _Page(Gtk.ScrolledWindow):
         if self._extrabox is not None:
             self._extrabox.destroy()
         self._extrabox = Gtk.HBox(False, 10)
-        self._vbox.pack_start(self._extrabox, False, False)
+        self._vbox.pack_start(self._extrabox, False, False, 0)
 
     def set_thumbnail(self, pixbuf):
         pixbuf = image_tools.add_border(pixbuf, 1)
@@ -62,7 +62,7 @@ class _Page(Gtk.ScrolledWindow):
         label = labels.BoldLabel(i18n.to_str(filename))
         label.set_alignment(0, 0.5)
         label.set_selectable(True)
-        self._mainbox.pack_start(label, False, False)
+        self._mainbox.pack_start(label, False, False, 0)
         self._mainbox.pack_start(Gtk.VBox()) # Just to add space (better way?)
 
     def set_main_info(self, info):
@@ -73,7 +73,7 @@ class _Page(Gtk.ScrolledWindow):
             label = Gtk.Label(text)
             label.set_alignment(0, 0.5)
             label.set_selectable(True)
-            self._mainbox.pack_start(label, False, False)
+            self._mainbox.pack_start(label, False, False, 0)
 
     def set_secondary_info(self, info):
         """Set the information below the main info box to the values in the
@@ -81,15 +81,15 @@ class _Page(Gtk.ScrolledWindow):
         """
         left_box = Gtk.VBox(True, 8)
         right_box = Gtk.VBox(True, 8)
-        self._extrabox.pack_start(left_box, False, False)
-        self._extrabox.pack_start(right_box, False, False)
+        self._extrabox.pack_start(left_box, False, False, 0)
+        self._extrabox.pack_start(right_box, False, False, 0)
         for desc, value in info:
             desc_label = labels.BoldLabel('%s:' % desc)
             desc_label.set_alignment(1.0, 1.0)
-            left_box.pack_start(desc_label, True, True)
+            left_box.pack_start(desc_label, True, True, 0)
             value_label = Gtk.Label(value)
             value_label.set_alignment(0, 1.0)
             value_label.set_selectable(True)
-            right_box.pack_start(value_label, True, True)
+            right_box.pack_start(value_label, True, True, 0)
 
 # vim: expandtab:sw=4:ts=4

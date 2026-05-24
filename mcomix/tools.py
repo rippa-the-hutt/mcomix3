@@ -20,11 +20,14 @@ def alphanumeric_sort(filenames):
     ordering.
     """
     def _format_substring(s):
+        # Return a tuple that can be compared across types in Python 3
+        # (0, int) sorts before (1, str)
         if s.isdigit():
-            return int(s)
+            return (0, int(s))
+        return (1, s.lower())
 
-        return s.lower()
-
+    # Filter out None values and sort
+    filenames = [f for f in filenames if f is not None]
     filenames.sort(key=lambda s: tuple(map(_format_substring, NUMERIC_REGEXP.findall(s))))
 
 def alphanumeric_compare(s1, s2):

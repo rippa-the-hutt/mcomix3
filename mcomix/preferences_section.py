@@ -25,8 +25,8 @@ class _PreferenceSection(Gtk.VBox):
         label.set_alignment(0, 0.5)
         hbox = Gtk.HBox(False, 0)
         hbox.pack_start(Gtk.HBox(), False, False, 6)
-        hbox.pack_start(self.contentbox)
-        self.pack_start(label, False, False)
+        hbox.pack_start(self.contentbox, False, True, 0)
+        self.pack_start(label, False, False, 0)
         self.pack_start(hbox, False, False, 6)
 
     def new_split_vboxes(self):
@@ -43,9 +43,9 @@ class _PreferenceSection(Gtk.VBox):
             right_box.set_size_request(self._right_column_width, -1)
 
         hbox = Gtk.HBox(False, 12)
-        hbox.pack_start(left_box)
-        hbox.pack_start(right_box, False, False)
-        self.contentbox.pack_start(hbox)
+        hbox.pack_start(left_box, False, True, 0)
+        hbox.pack_start(right_box, False, False, 0)
+        self.contentbox.pack_start(hbox, False, True, 0)
         return left_box, right_box
 
 # vim: expandtab:sw=4:ts=4

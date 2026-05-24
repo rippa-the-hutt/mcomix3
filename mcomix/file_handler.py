@@ -297,8 +297,12 @@ class FileHandler(object):
         self.file_loading = False
 
         files = self._extractor.get_files()
+        # Debug: check for None values
+        none_files = [f for f in files if f is None]
+        if none_files:
+            log.error('! DEBUG: Found %d None values in files list', len(none_files))
         archive_images = [image for image in files
-            if self._image_re.search(image)
+            if image is not None and self._image_re.search(image)
             # Remove MacOS meta files from image list
             and not '__MACOSX' in os.path.normpath(image).split(os.sep)]
 
@@ -306,7 +310,7 @@ class FileHandler(object):
         image_files = [ os.path.join(self._tmp_dir, f)
                         for f in archive_images ]
 
-        comment_files = filter(self._comment_re.search, files)
+        comment_files = list(filter(self._comment_re.search, files))
         tools.alphanumeric_sort(comment_files)
         self._comment_files = [ os.path.join(self._tmp_dir, f)
                                 for f in comment_files ]

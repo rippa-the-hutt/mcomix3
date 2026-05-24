@@ -409,7 +409,7 @@ class _BookArea(Gtk.ScrolledWindow):
                     constants.SIZE_TINY):
                 cover_size_scale.add_mark(mark, Gtk.PositionType.TOP, None)
 
-            dialog.get_message_area().pack_end(cover_size_scale)
+            dialog.get_message_area().pack_end(cover_size_scale, False, True, 0)
             response = dialog.run()
             size = int(adjustment.get_value())
             dialog.destroy()

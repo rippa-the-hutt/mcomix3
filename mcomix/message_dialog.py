@@ -34,7 +34,7 @@ class MessageDialog(Gtk.MessageDialog):
         self.remember_checkbox = Gtk.CheckButton(_('Do not ask again.'))
         self.remember_checkbox.set_no_show_all(True)
         self.remember_checkbox.set_can_focus(False)
-        self.get_message_area().pack_end(self.remember_checkbox, padding=6)
+        self.get_message_area().pack_end(self.remember_checkbox, False, True, 6)
 
     def set_text(self, primary, secondary=None):
         """ Formats the dialog's text fields.

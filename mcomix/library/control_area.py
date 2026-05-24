@@ -39,7 +39,7 @@ class _ControlArea(Gtk.HBox):
 
         infobox = Gtk.VBox(False, 5)
         infobox.set_border_width(10)
-        self.pack_start(borderbox)
+        self.pack_start(borderbox, False, True, 0)
         borderbox.add(insidebox)
         insidebox.add(infobox)
 
@@ -47,30 +47,30 @@ class _ControlArea(Gtk.HBox):
         self._namelabel.set_alignment(0, 0.5)
         self._namelabel.set_selectable(True)
         self._namelabel.set_ellipsize(Pango.EllipsizeMode.MIDDLE)
-        infobox.pack_start(self._namelabel, False, False)
+        infobox.pack_start(self._namelabel, False, False, 0)
 
         self._filelabel = Gtk.Label()
         self._filelabel.set_ellipsize(Pango.EllipsizeMode.MIDDLE)
         self._filelabel.set_alignment(0, 0.5)
-        infobox.pack_start(self._filelabel, False, False)
+        infobox.pack_start(self._filelabel, False, False, 0)
 
         self._dirlabel = Gtk.Label()
         self._dirlabel.set_ellipsize(Pango.EllipsizeMode.MIDDLE)
         self._dirlabel.set_alignment(0, 0.5)
         self._dirlabel.set_selectable(True)
-        infobox.pack_start(self._dirlabel, False, False)
+        infobox.pack_start(self._dirlabel, False, False, 0)
 
         vbox = Gtk.VBox(False, 10)
         vbox.set_size_request(350, -1)
-        self.pack_start(vbox, False)
+        self.pack_start(vbox, False, True, 0)
 
         # First line of controls, containing the search box
         hbox = Gtk.HBox(False)
-        vbox.pack_start(hbox)
+        vbox.pack_start(hbox, False, True, 0)
 
         label = Gtk.Label(_('_Search:'))
         label.set_use_underline(True)
-        hbox.pack_start(label, False, False)
+        hbox.pack_start(label, False, False, 0)
         search_entry = Gtk.Entry()
         search_entry.connect('activate', self._filter_books)
         search_entry.set_tooltip_text(
@@ -81,7 +81,7 @@ class _ControlArea(Gtk.HBox):
 
         # Last line of controls, containing buttons like 'Open'
         hbox = Gtk.HBox(False, 10)
-        vbox.pack_end(hbox)
+        vbox.pack_end(hbox, False, True, 0)
 
         watchlist_button = Gtk.Button(_("_Watch list"))
         watchlist_button.set_image(
@@ -90,14 +90,14 @@ class _ControlArea(Gtk.HBox):
             lambda *args: WatchListDialog(self._library))
         watchlist_button.set_tooltip_text(
             _('Open the watchlist management dialog.'))
-        hbox.pack_start(watchlist_button)
+        hbox.pack_start(watchlist_button, False, True, 0)
 
         self._open_button = Gtk.Button(label="Open")
         self._open_button.connect('clicked',
             self._library.book_area.open_selected_book)
         self._open_button.set_tooltip_text(_('Open the selected book.'))
         self._open_button.set_sensitive(False)
-        hbox.pack_end(self._open_button)
+        hbox.pack_end(self._open_button, False, True, 0)
 
     def update_info(self, selected):
         """Update the info box using the currently <selected> books from

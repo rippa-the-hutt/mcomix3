@@ -214,7 +214,7 @@ class Thumbnailer(object):
             if os.path.isfile(thumbpath):
                 os.remove(thumbpath)
 
-            pixbuf.save(thumbpath, 'png', tEXt_data)
+            pixbuf.savev(thumbpath, 'png', list(tEXt_data.keys()), list(tEXt_data.values()))
             os.chmod(thumbpath, 0o600)
 
         except Exception as ex:
