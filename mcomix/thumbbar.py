@@ -247,7 +247,7 @@ class ThumbnailSidebar(Gtk.ScrolledWindow):
 
         # context.set_icon_pixmap() seems to cause crashes, so we do a
         # quick and dirty conversion to pixbuf.
-        pointer = GdkPixbuf.Pixbuf(GdkPixbuf.Colorspace.RGB, True, 8,
+        pointer = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB, True, 8,
             *pixmap.get_size())
         pointer = pointer.get_from_drawable(pixmap, treeview.get_colormap(),
             0, 0, 0, 0, *pixmap.get_size())
@@ -255,7 +255,7 @@ class ThumbnailSidebar(Gtk.ScrolledWindow):
 
     def _get_empty_thumbnail(self):
         """ Create an empty filler pixmap. """
-        pixbuf = GdkPixbuf.Pixbuf(colorspace=GdkPixbuf.Colorspace.RGB,
+        pixbuf = GdkPixbuf.Pixbuf.new(colorspace=GdkPixbuf.Colorspace.RGB,
                                 has_alpha=True,
                                 bits_per_sample=8,
                                 width=self._pixbuf_size,

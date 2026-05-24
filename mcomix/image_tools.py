@@ -57,16 +57,25 @@ GTK_GDK_COLOR_WHITE = Gdk.RGBA(1, 1, 1, 1.0)
 def get_missing_pixbuf():
     global MISSING_IMAGE_ICON
     if MISSING_IMAGE_ICON is None:
+        # Create fallback in main thread only
+        return None
+    return MISSING_IMAGE_ICON
+
+def init_missing_pixbuf():
+    """Initialize the missing image pixbuf. Must be called from the main thread."""
+    global MISSING_IMAGE_ICON
+    try:
+        icon_theme = Gtk.IconTheme.get_default()
+        MISSING_IMAGE_ICON = icon_theme.load_icon(
+            "image-missing", Gtk.IconSize.LARGE_TOOLBAR, 0)
+    except Exception:
+        # Ultimate fallback: create a small empty pixbuf using GdkPixbuf
         try:
-            icon_theme = Gtk.IconTheme.get_default()
-            MISSING_IMAGE_ICON = icon_theme.load_icon(
-                "image-missing", Gtk.IconSize.LARGE_TOOLBAR, 0)
-        except Exception:
-            # Ultimate fallback: create a small empty pixbuf
             MISSING_IMAGE_ICON = GdkPixbuf.Pixbuf.new(
                 GdkPixbuf.Colorspace.RGB, True, 8, 48, 48)
             MISSING_IMAGE_ICON.fill(0x808080ff)
-    return MISSING_IMAGE_ICON
+        except Exception:
+            MISSING_IMAGE_ICON = None
 
 
 def rotate_pixbuf(src, rotation):
@@ -177,7 +186,7 @@ def add_border(pixbuf, thickness, colour=0x000000FF):
     """Return a pixbuf from <pixbuf> with a <thickness> px border of
     <colour> added.
     """
-    canvas = GdkPixbuf.Pixbuf(GdkPixbuf.Colorspace.RGB, True, 8,
+    canvas = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB, True, 8,
         pixbuf.get_width() + thickness * 2,
         pixbuf.get_height() + thickness * 2)
     canvas.fill(colour)
@@ -262,7 +271,7 @@ def get_most_common_edge_colour(pixbufs, edge=2):
         height = pixbuf.get_height()
         edge = min(edge, width, height)
 
-        subpix = GdkPixbuf.Pixbuf(GdkPixbuf.Colorspace.RGB,
+        subpix = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB,
                 pixbuf.get_has_alpha(), 8, edge, height)
         if side == 'left':
             pixbuf.copy_area(0, 0, edge, height, subpix, 0, 0)
@@ -529,7 +538,7 @@ def combine_pixbufs( pixbuf1, pixbuf2, are_in_manga_mode ):
 
     new_height = max( l_source_pixbuf_height, r_source_pixbuf_height )
 
-    new_pix_buf = GdkPixbuf.Pixbuf( GdkPixbuf.Colorspace.RGB, has_alpha,
+    new_pix_buf = GdkPixbuf.Pixbuf.new( GdkPixbuf.Colorspace.RGB, has_alpha,
         bits_per_sample, new_width, new_height )
 
     l_source_pixbuf.copy_area( 0, 0, l_source_pixbuf_width,
@@ -573,7 +582,7 @@ def get_image_info(path):
     else:
         info = GdkPixbuf.Pixbuf.get_file_info(path)
         if info is not None:
-            info = info[0]['name'].upper(), info[1], info[2]
+            info = info[0].get_name().upper(), info[1], info[2]
     if info is None:
         info = (_('Unknown filetype'), 0, 0)
     return info

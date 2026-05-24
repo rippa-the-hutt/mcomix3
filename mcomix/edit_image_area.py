@@ -45,7 +45,7 @@ class _ImageArea(Gtk.ScrolledWindow):
                                                         size=(self._thumbnail_size,
                                                               self._thumbnail_size))
 
-        self._filler = GdkPixbuf.Pixbuf(colorspace=GdkPixbuf.Colorspace.RGB,
+        self._filler = GdkPixbuf.Pixbuf.new(colorspace=GdkPixbuf.Colorspace.RGB,
                                       has_alpha=True, bits_per_sample=8,
                                       width=self._thumbnail_size,
                                       height=self._thumbnail_size)
@@ -140,7 +140,7 @@ class _ImageArea(Gtk.ScrolledWindow):
 
         # context.set_icon_pixmap() seems to cause crashes, so we do a
         # quick and dirty conversion to pixbuf.
-        pointer = GdkPixbuf.Pixbuf(GdkPixbuf.Colorspace.RGB, True, 8,
+        pointer = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB, True, 8,
             *pixmap.get_size())
         pointer = pointer.get_from_drawable(pixmap, iconview.get_colormap(),
             0, 0, 0, 0, *pixmap.get_size())

@@ -641,7 +641,7 @@ class FileHandler(object):
             page_index = self._window.imagehandler.get_current_page() - 1
             current_file_info = [ path, page_index ]
 
-            cPickle.dump(current_file_info, config, cPickle.HIGHEST_PROTOCOL)
+            pickle.dump(current_file_info, config, pickle.HIGHEST_PROTOCOL)
             config.close()
 
     def read_fileinfo_file(self):
@@ -654,7 +654,7 @@ class FileHandler(object):
             try:
                 config = open(constants.FILEINFO_PICKLE_PATH, 'rb')
 
-                fileinfo = cPickle.load(config)
+                fileinfo = pickle.load(config)
 
                 config.close()
 

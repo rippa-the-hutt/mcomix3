@@ -466,7 +466,7 @@ class _BookArea(Gtk.ScrolledWindow):
     def _get_empty_thumbnail(self):
         """ Create an empty filler pixmap. """
         width, height = self._pixbuf_size()
-        pixbuf = GdkPixbuf.Pixbuf(colorspace=GdkPixbuf.Colorspace.RGB,
+        pixbuf = GdkPixbuf.Pixbuf.new(colorspace=GdkPixbuf.Colorspace.RGB,
                                 has_alpha=True,
                                 bits_per_sample=8,
                                 width=width, height=height)
@@ -664,7 +664,7 @@ class _BookArea(Gtk.ScrolledWindow):
         if num_books > 1:
             cover_width = cover.get_width()
             cover_height = cover.get_height()
-            pointer = GdkPixbuf.Pixbuf(GdkPixbuf.Colorspace.RGB, True, 8,
+            pointer = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB, True, 8,
                 max(30, cover_width + 15), max(30, cover_height + 10))
             pointer.fill(0x00000000)
             cover.composite(pointer, 0, 0, cover_width, cover_height, 0, 0,

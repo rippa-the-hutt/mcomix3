@@ -25,7 +25,7 @@ def alphanumeric_sort(filenames):
 
         return s.lower()
 
-    filenames.sort(key=lambda s: map(_format_substring, NUMERIC_REGEXP.findall(s)))
+    filenames.sort(key=lambda s: tuple(map(_format_substring, NUMERIC_REGEXP.findall(s))))
 
 def alphanumeric_compare(s1, s2):
     """ Compares two strings by their natural order (i.e. 1 before 10)

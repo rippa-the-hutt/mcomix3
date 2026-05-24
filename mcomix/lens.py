@@ -126,7 +126,7 @@ class MagnifyingLens(object):
         """Get a pixbuf containing the appropiate image data for the lens
         where <x> and <y> are the positions of the cursor.
         """
-        canvas = GdkPixbuf.Pixbuf(GdkPixbuf.Colorspace.RGB, True, 8,
+        canvas = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB, True, 8,
             prefs['lens size'], prefs['lens size'])
         canvas.fill(image_tools.convert_rgb16list_to_rgba8int(self._window.get_bg_colour()))
         cb = self._window.layout.get_content_boxes()

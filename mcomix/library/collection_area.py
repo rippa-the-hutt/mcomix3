@@ -463,7 +463,7 @@ class _CollectionArea(Gtk.ScrolledWindow):
         pixmap = treeview.create_row_drag_icon(path)
         # context.set_icon_pixmap() seems to cause crashes, so we do a
         # quick and dirty conversion to pixbuf.
-        pointer = GdkPixbuf.Pixbuf(GdkPixbuf.Colorspace.RGB, True, 8,
+        pointer = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB, True, 8,
             *pixmap.get_size())
         pointer = pointer.get_from_drawable(pixmap, treeview.get_colormap(),
             0, 0, 0, 0, *pixmap.get_size())
