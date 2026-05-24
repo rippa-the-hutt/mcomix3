@@ -54,8 +54,8 @@ class ZoomModel(object):
             scale_up)
         prefscale = ZoomModel._preferred_scale(union_size, limits, distribution_axis)
         preferred_scales = tuple([prefscale if not dnt else IDENTITY_ZOOM for dnt in do_not_transform])
-        prescaled = map(lambda size, scale, dnt: tuple(_scale_image_size(size, scale)),
-            image_sizes, preferred_scales, do_not_transform)
+        prescaled = list(map(lambda size, scale, dnt: tuple(_scale_image_size(size, scale)),
+            image_sizes, preferred_scales, do_not_transform))
         prescaled_union_size = _union_size(prescaled, distribution_axis)
         def _other_preferences(limits, distribution_axis):
             for i in range(len(limits)):
@@ -71,11 +71,11 @@ class ZoomModel(object):
             distributed_scales = ZoomModel._scale_distributed(image_sizes,
                 distribution_axis, limits[distribution_axis], scale_up, do_not_transform)
             if other_preferences:
-                preferred_scales = map(min, preferred_scales, distributed_scales)
+                preferred_scales = list(map(min, preferred_scales, distributed_scales))
             else:
                 preferred_scales = distributed_scales
         if not scale_up:
-            preferred_scales = map(lambda x: min(x, IDENTITY_ZOOM), preferred_scales)
+            preferred_scales = list(map(lambda x: min(x, IDENTITY_ZOOM), preferred_scales))
         user_scale = 2 ** (self._user_zoom_log / USER_ZOOM_LOG_SCALE1)
         res_scales = [preferred_scales[i] * (user_scale if not do_not_transform[i] else IDENTITY_ZOOM)
             for i in range(len(preferred_scales))]
@@ -151,7 +151,7 @@ class ZoomModel(object):
         if n >= max_size:
             # In this case, only one solution or only an approximation is available.
             # if n > max_size, the result won't fit into max_size.
-            return map(lambda x: tools.div(1, x[axis]), sizes) # FIXME ignores do_not_transform
+            return list(map(lambda x: tools.div(1, x[axis]), sizes)) # FIXME ignores do_not_transform
         total_axis_size = sum(map(lambda x: x[axis], sizes))
         if (total_axis_size <= max_size) and not allow_upscaling:
             # identity
@@ -232,7 +232,7 @@ class ZoomModel(object):
             # other). However, this is not as useful as the other loop, slightly
             # more complicated and it won't do anything if all tuples are equal.
             pass
-        return map(lambda d: d[0], scaling_data)
+        return list(map(lambda d: d[0], scaling_data))
 
 def _scale_image_size(size, scale):
     return _round_nonempty(tools.scale(size, scale))
@@ -248,7 +248,7 @@ def _union_size(image_sizes, distribution_axis):
     if len(image_sizes) == 0:
         return []
     n = len(image_sizes[0])
-    union_size = map(lambda i: reduce(max, map(lambda x: x[i], image_sizes)), range(n))
+    union_size = list(map(lambda i: reduce(max, map(lambda x: x[i], image_sizes)), range(n)))
     union_size[distribution_axis] = sum(map(lambda x: x[distribution_axis], image_sizes))
     return union_size
 
