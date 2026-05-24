@@ -25,14 +25,7 @@ STDOUT = subprocess.STDOUT
 # to prevent automatic conversion when appending Unicode strings
 # to byte strings later on.
 def _fix_args(args):
-    fixed_args = []
-    for arg in args:
-        if isinstance(arg, str):
-            fixed_args.append(arg.encode(sys.getfilesystemencoding()))
-        else:
-            fixed_args.append(arg)
-    return fixed_args
-
+    return args
 def _get_creationflags():
     if 'win32' == sys.platform:
         # Do not create a console window.

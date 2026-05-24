@@ -100,8 +100,8 @@ class RarArchive(archive_base.ExternalExecutableArchive):
             self._path = None
             proc = process.popen(self._get_list_arguments(), stderr=process.STDOUT)
             try:
-                for line in proc.stdout:
-                    filename = self._parse_list_output_line(line.rstrip(os.linesep))
+                for raw_line in proc.stdout:
+                    filename = self._parse_list_output_line(raw_line.decode("utf-8").rstrip(os.linesep))
                     if filename is not None:
                         yield self._unicode_filename(filename)
             except self.EncryptedHeader:

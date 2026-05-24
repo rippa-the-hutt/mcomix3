@@ -211,8 +211,8 @@ class ExternalExecutableArchive(NonUnicodeArchive):
                              self._get_list_arguments() +
                              [self.archive])
         try:
-            for line in proc.stdout:
-                filename = self._parse_list_output_line(line.rstrip(os.linesep))
+            for raw_line in proc.stdout:
+                filename = self._parse_list_output_line(raw_line.decode("utf-8").rstrip(os.linesep))
                 if filename is not None:
                     yield self._unicode_filename(filename)
         finally:

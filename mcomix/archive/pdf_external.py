@@ -34,7 +34,8 @@ class PdfArchive(archive_base.BaseArchive):
     def iter_contents(self):
         proc = process.popen(_mutool_exec + ['show', '--', self.archive, 'pages'])
         try:
-            for line in proc.stdout:
+            for raw_line in proc.stdout:
+                line = raw_line.decode("utf-8")
                 if line.startswith('page '):
                     yield line.split()[1] + '.png'
         finally:
@@ -52,8 +53,8 @@ class PdfArchive(archive_base.BaseArchive):
         try:
             max_size = 0
             max_dpi = PDF_RENDER_DPI_DEF
-            for line in proc.stdout:
-                match = self._fill_image_regex.match(line)
+            for raw_line in proc.stdout:
+                match = self._fill_image_regex.match(raw_line.decode("utf-8"))
                 if not match:
                     continue
                 matrix = [float(f) for f in match.group('matrix').split()]
