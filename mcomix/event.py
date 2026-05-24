@@ -482,6 +482,27 @@ class EventHandler(object):
             else:
                 self._window.flip_page(+1)
 
+
+        elif event.direction == Gdk.ScrollDirection.SMOOTH:
+            pixels = prefs['number of pixels to scroll per mouse wheel event']
+            if event.state & Gdk.ModifierType.CONTROL_MASK:
+                if event.delta_y < 0:
+                    self._window.manual_zoom_in()
+                elif event.delta_y > 0:
+                    self._window.manual_zoom_out()
+            else:
+                if event.delta_y != 0:
+                    scroll_y = int(event.delta_y * pixels)
+                    if prefs['smart scroll']:
+                        if scroll_y > 0:
+                            self._smart_scroll_down(scroll_y)
+                        else:
+                            self._smart_scroll_up(-scroll_y)
+                    else:
+                        self._scroll_with_flipping(0, -scroll_y)
+                if event.delta_x != 0:
+                    scroll_x = int(event.delta_x * pixels)
+                    self._scroll_with_flipping(-scroll_x, 0)
     def mouse_press_event(self, widget, event):
         """Handle mouse click events on the main layout area."""
 

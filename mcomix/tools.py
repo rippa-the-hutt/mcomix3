@@ -159,14 +159,14 @@ def scale(t, factor):
 
 def vector_sub(a, b):
     """ Subtracts vector b from vector a. """
-    return map(operator.sub, a, b)
+    return list(map(operator.sub, a, b))
 
 def vector_add(a, b):
     """ Adds vector a to vector b. """
-    return map(operator.add, a, b)
+    return list(map(operator.add, a, b))
 
 def vector_opposite(a):
     """ Returns the opposite vector -a. """
-    return map(operator.neg, a)
+    return list(map(operator.neg, a))
 
 # vim: expandtab:sw=4:ts=4

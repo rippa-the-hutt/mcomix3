@@ -251,7 +251,7 @@ class Scrolling(object):
 
     @staticmethod
     def _map_remap_axes(vectors, order):
-        return map(lambda v: Scrolling._remap_axes(v, order), vectors)
+        return list(map(lambda v: Scrolling._remap_axes(v, order), vectors))
 
 
     @staticmethod
