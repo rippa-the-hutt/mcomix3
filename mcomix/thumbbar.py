@@ -148,6 +148,9 @@ class ThumbnailSidebar(Gtk.ScrolledWindow):
         self._text_cellrenderer.set_property('foreground-rgba',
                 image_tools.text_color_for_background_color(colour))
 
+    def stop_thumbnail_updates(self):
+        self._treeview.stop_update()
+
     @property
     def _pixbuf_size(self):
         # Don't forget the extra pixels for the border!

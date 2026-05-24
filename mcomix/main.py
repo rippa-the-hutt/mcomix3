@@ -1154,11 +1154,15 @@ class MainWindow(Gtk.Window):
             main_dialog._dialog.close()
         backend.LibraryBackend().close()
 
+        # Stop worker threads to avoid hanging on exit
+        if hasattr(self, 'thumbnailsidebar') and self.thumbnailsidebar:
+            self.thumbnailsidebar.stop_thumbnail_updates()
+
         # This hack is to avoid Python issue #1856.
         for thread in threading.enumerate():
             if thread is not threading.currentThread():
                 log.debug('Waiting for thread %s to finish before exit', thread)
-                thread.join()
+                thread.join(timeout=2)
 
 #: Main window instance
 __main_window = None

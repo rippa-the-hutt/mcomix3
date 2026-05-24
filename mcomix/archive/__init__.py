@@ -29,7 +29,7 @@ def ask_for_password(archive):
     dialog.destroy()
 
     if result == Gtk.ResponseType.OK and password:
-        return password.decode('utf-8')
+        return password
     else:
         return None
 
