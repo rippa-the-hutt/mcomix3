@@ -316,7 +316,7 @@ class _KeybindingManager(object):
 
     def get_bindings_for_action(self, name):
         """ Returns a list of (keycode, modifier) for the action C{name}. """
-        return self._action_to_bindings[name]
+        return [(k, Gdk.ModifierType(m)) for (k, m) in self._action_to_bindings[name]]
 
     def _migrate_from_old_bindings(self):
         """ This method deals with upgrading from MComix 1.0 and older to
