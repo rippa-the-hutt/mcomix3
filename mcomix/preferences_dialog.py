@@ -689,7 +689,7 @@ class _PreferencesDialog(Gtk.Dialog):
 
 
     def _create_pref_check_button(self, label, prefkey, tooltip_text):
-        button = Gtk.CheckButton(label)
+        button = Gtk.CheckButton(label=label)
         button.set_active(prefs[prefkey])
         button.connect('toggled', self._check_button_cb, prefkey)
         if tooltip_text:
@@ -699,11 +699,11 @@ class _PreferencesDialog(Gtk.Dialog):
 
     def _create_binary_pref_radio_buttons(self, label1, prefkey1, tooltip_text1,
         label2, prefkey2, tooltip_text2):
-        button1 = Gtk.RadioButton(None, label1)
+        button1 = Gtk.RadioButton(group=None, label=label1)
         button1.connect('toggled', self._check_button_cb, prefkey1)
         if tooltip_text1:
             button1.set_tooltip_text(tooltip_text1)
-        button2 = Gtk.RadioButton(button1, label2)
+        button2 = Gtk.RadioButton(group=button1, label=label2)
         button2.connect('toggled', self._check_button_cb, prefkey2)
         if tooltip_text2:
             button2.set_tooltip_text(tooltip_text2)
@@ -712,7 +712,7 @@ class _PreferencesDialog(Gtk.Dialog):
 
 
     def _create_color_button(self, prefkey):
-        button = Gtk.ColorButton(Gdk.RGBA(*prefs[prefkey]))
+        button = Gtk.ColorButton(rgba=Gdk.RGBA(*prefs[prefkey]))
         button.connect('color_set', self._color_button_cb, prefkey)
         return button
 

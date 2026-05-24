@@ -198,7 +198,7 @@ class _KeybindingManager(object):
         # Add gtk accelerator for labels in menu
         if len(self._action_to_bindings[name]) > 0:
             key, mod = self._action_to_bindings[name][0]
-            Gtk.AccelMap.change_entry('<Actions>/mcomix-main/%s' % name, key, mod, True)
+            Gtk.AccelMap.change_entry('<Actions>/mcomix-main/%s' % name, key, Gdk.ModifierType(mod), True)
 
         self._action_to_callback[name] = (callback, args, kwargs)
 
@@ -274,7 +274,7 @@ class _KeybindingManager(object):
         # so limit possible states to begin with?
         for stored_binding, action in self._binding_to_action.items():
             stored_keycode, stored_flags = stored_binding
-            if stored_keycode == keybinding[0] and stored_flags & keybinding[1]:
+            if stored_keycode == keybinding[0] and stored_flags & int(keybinding[1]):
                 func, args, kwargs = self._action_to_callback[action]
                 self._window.emit_stop_by_name('key_press_event')
                 return func(*args, **kwargs)
@@ -286,7 +286,7 @@ class _KeybindingManager(object):
         for action, bindings in self._action_to_bindings.items():
             if bindings is not None:
                 action_to_keys[action] = [
-                    Gtk.accelerator_name(keyval, modifiers) for
+                    Gtk.accelerator_name(keyval, Gdk.ModifierType(modifiers)) for
                     (keyval, modifiers) in bindings
                 ]
         fp = open(constants.KEYBINDINGS_CONF_PATH, "w")
