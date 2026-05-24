@@ -56,7 +56,7 @@ class _EditArchiveDialog(Gtk.Dialog):
         notebook.set_border_width(6)
         notebook.append_page(self._image_area, Gtk.Label(_('Images')))
         notebook.append_page(self._comment_area, Gtk.Label(_('Comment files')))
-        self.vbox.pack_start(notebook)
+        self.get_content_area().pack_start(notebook, True, True, 0)
 
         self.show_all()
 

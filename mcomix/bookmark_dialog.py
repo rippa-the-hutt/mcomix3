@@ -30,7 +30,7 @@ class _BookmarksDialog(Gtk.Dialog):
         scrolled.set_border_width(0)
         scrolled.set_shadow_type(Gtk.ShadowType.IN)
         scrolled.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
-        self.vbox.pack_start(scrolled)
+        self.get_content_area().pack_start(scrolled, True, True, 0)
 
         self._liststore = Gtk.ListStore(GdkPixbuf.Pixbuf, str,
             str, str, str, bookmark_menu_item._Bookmark)

@@ -32,7 +32,7 @@ class _PropertiesDialog(Gtk.Dialog):
         notebook = Gtk.Notebook()
         self.set_border_width(4)
         notebook.set_border_width(6)
-        self.vbox.pack_start(notebook)
+        self.get_content_area().pack_start(notebook, True, True, 0)
 
         self._archive_page = properties_page._Page()
         notebook.append_page(self._archive_page, Gtk.Label(_('Archive')))

@@ -39,11 +39,11 @@ class _EnhanceImageDialog(Gtk.Dialog):
         vbox = Gtk.VBox(False, 10)
         self.set_border_width(4)
         vbox.set_border_width(6)
-        self.vbox.add(vbox)
+        self.get_content_area().add(vbox)
 
         self._hist_image = Gtk.Image()
         self._hist_image.set_size_request(262, 170)
-        vbox.pack_start(self._hist_image)
+        vbox.pack_start(self._hist_image, True, True, 0)
         vbox.pack_start(Gtk.HSeparator())
 
         hbox = Gtk.HBox(False, 4)

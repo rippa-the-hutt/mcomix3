@@ -38,7 +38,7 @@ class _PreferencesDialog(Gtk.Dialog):
         self.connect('response', self._response)
 
         notebook = self.notebook = Gtk.Notebook()
-        self.vbox.pack_start(notebook)
+        self.get_content_area().pack_start(notebook, True, True, 0)
         self.set_border_width(4)
         notebook.set_border_width(6)
 
@@ -462,8 +462,8 @@ class _PreferencesDialog(Gtk.Dialog):
                 self._sort_order_changed_cb)
 
         box = Gtk.HBox()
-        box.pack_start(sortkey_box)
-        box.pack_start(sortorder_box)
+        box.pack_start(sortkey_box, True, True, 0)
+        box.pack_start(sortorder_box, True, True, 0)
 
         label = _("Files will be opened and displayed according to the sort order "
               "specified here. This option does not affect ordering within archives.")
@@ -509,8 +509,8 @@ class _PreferencesDialog(Gtk.Dialog):
                 self._sort_archive_order_changed_cb)
 
         box = Gtk.HBox()
-        box.pack_start(sortkey_box)
-        box.pack_start(sortorder_box)
+        box.pack_start(sortkey_box, True, True, 0)
+        box.pack_start(sortorder_box, True, True, 0)
 
         label = _("Files within archives will be sorted according to the order specified here. "
                   "Natural order will sort numbered files based on their natural order, "

@@ -158,14 +158,14 @@ class _CollectionArea(Gtk.ScrolledWindow):
         )
 
         box = Gtk.HBox() # To get nice line-ups with the padding.
-        add_dialog.vbox.pack_start(box)
+        add_dialog.get_content_area().pack_start(box, True, True, 0)
         entry = Gtk.Entry()
         entry.set_activates_default(True)
         box.pack_start(entry, True, True, 6)
         box.show_all()
 
         response = add_dialog.run()
-        name = entry.get_text().decode('utf-8')
+        name = entry.get_text()
         add_dialog.destroy()
         if response == Gtk.ResponseType.OK and name:
             if self._library.backend.add_collection(name):
@@ -253,7 +253,7 @@ class _CollectionArea(Gtk.ScrolledWindow):
         rename_dialog.set_default_response(Gtk.ResponseType.OK)
 
         box = Gtk.HBox() # To get nice line-ups with the padding.
-        rename_dialog.vbox.pack_start(box)
+        rename_dialog.get_content_area().pack_start(box, True, True, 0)
         entry = Gtk.Entry()
         entry.set_text(old_name)
         entry.set_activates_default(True)

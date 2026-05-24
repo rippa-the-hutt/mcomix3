@@ -357,8 +357,8 @@ class _BookArea(Gtk.ScrolledWindow):
         elif path2 is None:
             return -1
 
-        name1 = os.path.split(path1.decode('utf-8'))[1].lower()
-        name2 = os.path.split(path2.decode('utf-8'))[1].lower()
+        name1 = os.path.split(path1)[1].lower()
+        name2 = os.path.split(path2)[1].lower()
 
         return tools.alphanumeric_compare(name1, name2)
 
@@ -585,7 +585,7 @@ class _BookArea(Gtk.ScrolledWindow):
         if len(paths) == 1:
             model = self._iconview.get_model()
             iter = model.get_iter(paths[0])
-            path = model.get_value(iter, 2).decode('utf-8')
+            path = model.get_value(iter, 2)
             pixbuf = model.get_value(iter, 0)
 
             self._library._window.clipboard.copy(path, pixbuf)
@@ -706,7 +706,7 @@ class _BookArea(Gtk.ScrolledWindow):
             return
 
         uris = [ portability.normalize_uri(uri) for uri in uris ]
-        paths = [ urllib.request.url2pathname(uri).decode('utf-8') for uri in uris ]
+        paths = [ urllib.request.url2pathname(uri) for uri in uris ]
 
         collection = self._library.collection_area.get_current_collection()
         collection_name = self._library.backend.get_collection_name(collection)

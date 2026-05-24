@@ -83,13 +83,13 @@ class WatchListDialog(Gtk.Dialog):
         scroll_window.add(self._treeview)
         main_box.pack_start(scroll_window, padding=2)
         main_box.pack_end(button_box, expand=False)
-        self.vbox.pack_start(main_box)
+        self.get_content_area().pack_start(main_box, True, True, 0)
 
         auto_checkbox = Gtk.CheckButton(
             _('Automatically scan for new books when library is _opened'), True)
         auto_checkbox.set_active(prefs['scan for new books on library startup'])
         auto_checkbox.connect('toggled', self._auto_scan_toggled_cb)
-        self.vbox.pack_end(auto_checkbox, False, False, 5)
+        self.get_content_area().pack_end(auto_checkbox, False, False, 5)
 
         self.resize(475, 350)
         self.connect('response', self._close_cb)
@@ -183,7 +183,7 @@ class WatchListDialog(Gtk.Dialog):
                      "OK", Gtk.ResponseType.ACCEPT))
         result = filechooser.run()
         if filechooser.get_filename() is not None:
-            directory = filechooser.get_filename().decode('utf-8')
+            directory = filechooser.get_filename()
         else:
             directory = ""
         filechooser.destroy()

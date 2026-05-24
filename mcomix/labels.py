@@ -26,9 +26,21 @@ class FormattedLabel(Gtk.Label):
     def _format(self):
         text_len = len(self.get_text())
         attrlist = Pango.AttrList()
-        attrlist.insert(Pango.AttrWeight(self._weight, 0, text_len))
-        attrlist.insert(Pango.AttrStyle(self._style, 0, text_len))
-        attrlist.insert(Pango.AttrScale(self._scale, 0, text_len))
+        if text_len > 0:
+            weight_attr = Pango.attr_weight_new(self._weight)
+            weight_attr.start_index = 0
+            weight_attr.end_index = text_len
+            attrlist.insert(weight_attr)
+            
+            style_attr = Pango.attr_style_new(self._style)
+            style_attr.start_index = 0
+            style_attr.end_index = text_len
+            attrlist.insert(style_attr)
+            
+            scale_attr = Pango.attr_scale_new(self._scale)
+            scale_attr.start_index = 0
+            scale_attr.end_index = text_len
+            attrlist.insert(scale_attr)
         self.set_attributes(attrlist)
 
 class BoldLabel(FormattedLabel):

@@ -55,7 +55,7 @@ class _CommentsDialog(Gtk.Dialog):
         notebook = Gtk.Notebook()
         notebook.set_scrollable(True)
         notebook.set_border_width(6)
-        self.vbox.pack_start(notebook)
+        self.get_content_area().pack_start(notebook, True, True, 0)
         self._notebook = notebook
         self._comments = {}
 
@@ -80,7 +80,7 @@ class _CommentsDialog(Gtk.Dialog):
 
         scrolled = Gtk.ScrolledWindow()
         scrolled.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
-        page.pack_start(scrolled)
+        page.pack_start(scrolled, True, True, 0)
 
         outbox = Gtk.EventBox()
         scrolled.add_with_viewport(outbox)

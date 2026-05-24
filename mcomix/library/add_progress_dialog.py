@@ -33,7 +33,7 @@ class _AddLibraryProgressDialog(Gtk.Dialog):
 
         main_box = Gtk.VBox(False, 5)
         main_box.set_border_width(6)
-        self.vbox.pack_start(main_box, False, False)
+        self.get_content_area().pack_start(main_box, False, False)
         hbox = Gtk.HBox(False, 10)
         main_box.pack_start(hbox, False, False, 5)
         left_box = Gtk.VBox(True, 5)

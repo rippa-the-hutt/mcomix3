@@ -57,7 +57,7 @@ class _BaseFileChooserDialog(Gtk.Dialog):
 
         self.filechooser = Gtk.FileChooserWidget(action=action)
         self.filechooser.set_size_request(680, 420)
-        self.vbox.pack_start(self.filechooser)
+        self.get_content_area().pack_start(self.filechooser, True, True, 0)
         self.set_border_width(4)
         self.filechooser.set_border_width(6)
         self.connect('response', self._response)
@@ -68,7 +68,7 @@ class _BaseFileChooserDialog(Gtk.Dialog):
         preview_box.set_size_request(130, 0)
         self._preview_image = Gtk.Image()
         self._preview_image.set_size_request(130, 130)
-        preview_box.pack_start(self._preview_image, False, False)
+        preview_box.pack_start(self._preview_image, False, False, 0)
         self.filechooser.set_preview_widget(preview_box)
 
         pango_scale_small = (1 / 1.2)
@@ -76,11 +76,11 @@ class _BaseFileChooserDialog(Gtk.Dialog):
         self._namelabel = labels.FormattedLabel(weight=Pango.Weight.BOLD,
             scale=pango_scale_small)
         self._namelabel.set_ellipsize(Pango.EllipsizeMode.MIDDLE)
-        preview_box.pack_start(self._namelabel, False, False)
+        preview_box.pack_start(self._namelabel, False, False, 0)
 
         self._sizelabel = labels.FormattedLabel(scale=pango_scale_small)
         self._sizelabel.set_ellipsize(Pango.EllipsizeMode.MIDDLE)
-        preview_box.pack_start(self._sizelabel, False, False)
+        preview_box.pack_start(self._sizelabel, False, False, 0)
         self.filechooser.set_use_preview_label(False)
         preview_box.show_all()
         self.filechooser.connect('update-preview', self._update_preview)
@@ -162,7 +162,8 @@ class _BaseFileChooserDialog(Gtk.Dialog):
         (patterns, mimes) that should pass the test. Returns True
         if the file passed in C{filter_info} should be displayed. """
 
-        path, uri, display, mime = filter_info
+        path = filter_info.filename
+        mime = filter_info.mime_type
         match_patterns, match_mimes = data
 
         matches_mime = bool(filter(
@@ -213,7 +214,7 @@ class _BaseFileChooserDialog(Gtk.Dialog):
             filter = self.filechooser.get_filter()
             paths = [ ]
             for path in self.filechooser.get_filenames():
-                path = path.decode('utf-8')
+                path = path
 
                 if os.path.isdir(path):
                     subdir_files = list(self.collect_files_from_subdir(path, filter,
@@ -225,7 +226,7 @@ class _BaseFileChooserDialog(Gtk.Dialog):
 
             # FileChooser.set_do_overwrite_confirmation() doesn't seem to
             # work on our custom dialog, so we use a simple alternative.
-            first_path = self.filechooser.get_filenames()[0].decode('utf-8')
+            first_path = self.filechooser.get_filenames()[0]
             if (self._action == Gtk.FileChooserAction.SAVE and
                 not os.path.isdir(first_path) and
                 os.path.exists(first_path)):
@@ -260,7 +261,7 @@ class _BaseFileChooserDialog(Gtk.Dialog):
 
     def _update_preview(self, *args):
         if self.filechooser.get_preview_filename():
-            path = self.filechooser.get_preview_filename().decode('utf-8')
+            path = self.filechooser.get_preview_filename()
         else:
             path = None
 
@@ -282,7 +283,7 @@ class _BaseFileChooserDialog(Gtk.Dialog):
             return
 
         current_path = self.filechooser.get_preview_filename()
-        if current_path and current_path.decode('utf-8') == filepath:
+        if current_path and current_path == filepath:
 
             if pixbuf is None:
                 self._preview_image.clear()
