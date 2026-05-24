@@ -558,9 +558,7 @@ class EventHandler(object):
     def mouse_move_event(self, widget, event):
         """Handle mouse pointer movement events."""
 
-        event = _get_latest_event_of_same_type(event)
-
-        if 'GDK_BUTTON1_MASK' in event.state.value_names:
+        if event.state & Gdk.ModifierType.BUTTON1_MASK:
             self._window.cursor_handler.set_cursor_type(constants.GRAB_CURSOR)
             scrolled = self._window.scroll(self._last_pointer_pos_x - event.x_root,
                                            self._last_pointer_pos_y - event.y_root)
@@ -568,7 +566,6 @@ class EventHandler(object):
             # Cursor wrapping stuff. See:
             # https://sourceforge.net/tracker/?func=detail&aid=2988441&group_id=146377&atid=764987
             if prefs['wrap mouse scroll'] and scrolled:
-                # FIXME: Problems with multi-screen setups
                 screen = self._window.get_screen()
                 warp_x0 = warp_y0 = 0
                 warp_x1 = screen.get_width()
@@ -579,9 +576,6 @@ class EventHandler(object):
                 if (new_x != event.x_root) or (new_y != event.y_root):
                     display = screen.get_display()
                     display.warp_pointer(screen, int(new_x), int(new_y))
-                    ## This might be (or might not be) necessary to avoid
-                    ## doing one warp multiple times.
-                    event = _get_latest_event_of_same_type(event)
 
                 self._last_pointer_pos_x = new_x
                 self._last_pointer_pos_y = new_y
@@ -589,7 +583,6 @@ class EventHandler(object):
                 self._last_pointer_pos_x = event.x_root
                 self._last_pointer_pos_y = event.y_root
             self._drag_timer = event.time
-
     def drag_n_drop_event(self, widget, context, x, y, selection, drag_id,
       eventtime):
         """Handle drag-n-drop events on the main layout area."""
