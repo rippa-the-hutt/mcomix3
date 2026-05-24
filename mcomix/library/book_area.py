@@ -74,10 +74,10 @@ class _BookArea(Gtk.ScrolledWindow):
         self._iconview.connect('drag_data_received', self._drag_data_received)
         self._iconview.connect('button_press_event', self._button_press)
         self._iconview.connect('key_press_event', self._key_press)
-        self._iconview.connect('popup_men', self._popup_menu)
-        self._iconview.modify_base(Gtk.StateFlags.NORMAL, Gdk.Color(red=0, green=0, blue=0))  # Black.
+        self._iconview.connect('popup_menu', self._popup_menu)
+        self._iconview.modify_base(Gtk.StateFlags.NORMAL, Gdk.Color(0, 0, 0))  # Black.
         self._iconview.enable_model_drag_source(0,
-            [Gtk.TargetEntry.new('book', Gdk.TargetFlags.SAME_APP, constants.LIBRARY_DRAG_EXTERNAL_ID)],
+            [Gtk.TargetEntry.new('book', Gtk.TargetFlags.SAME_APP, constants.LIBRARY_DRAG_EXTERNAL_ID)],
             Gdk.DragAction.MOVE)
         self._iconview.drag_dest_set(Gtk.DestDefaults.ALL,
             [Gtk.TargetEntry.new('text/uri-list', 0, constants.LIBRARY_DRAG_EXTERNAL_ID)],

@@ -38,13 +38,13 @@ class _CollectionArea(Gtk.ScrolledWindow):
         self._treeview.connect_after('drag_begin', self._drag_begin)
         self._treeview.connect('button_press_event', self._button_press)
         self._treeview.connect('key_press_event', self._key_press)
-        self._treeview.connect('popup_men', self._popup_menu)
+        self._treeview.connect('popup_menu', self._popup_menu)
         self._treeview.connect('row_activated', self._expand_or_collapse_row)
         self._treeview.set_headers_visible(False)
         self._treeview.set_rules_hint(True)
         self._set_acceptable_drop(True)
         self._treeview.enable_model_drag_source(Gdk.ModifierType.BUTTON1_MASK,
-            [Gtk.TargetEntry.newGtk.TargetEntry.new('collection', Gdk.TargetFlags.SAME_WIDGET, constants.LIBRARY_DRAG_COLLECTION_ID)],
+            [Gtk.TargetEntry.new('collection', Gtk.TargetFlags.SAME_WIDGET, constants.LIBRARY_DRAG_COLLECTION_ID)],
             Gdk.DragAction.MOVE)
 
         cellrenderer = Gtk.CellRendererText()
@@ -447,8 +447,8 @@ class _CollectionArea(Gtk.ScrolledWindow):
         """Set the TreeView to accept drops if <acceptable> is True."""
         if acceptable:
             self._treeview.enable_model_drag_dest(
-                [Gtk.TargetEntry.new('book', Gdk.TargetFlags.SAME_APP, constants.LIBRARY_DRAG_BOOK_ID),
-                Gtk.TargetEntry.new('collection', Gdk.TargetFlags.SAME_WIDGET, constants.LIBRARY_DRAG_COLLECTION_ID)],
+                [Gtk.TargetEntry.new('book', Gtk.TargetFlags.SAME_APP, constants.LIBRARY_DRAG_BOOK_ID),
+                Gtk.TargetEntry.new('collection', Gtk.TargetFlags.SAME_WIDGET, constants.LIBRARY_DRAG_COLLECTION_ID)],
                 Gdk.DragAction.MOVE)
         else:
             self._treeview.enable_model_drag_dest([], Gdk.DragAction.MOVE)

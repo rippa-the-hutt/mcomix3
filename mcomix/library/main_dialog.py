@@ -41,7 +41,6 @@ class _LibraryDialog(Gtk.Window):
         self.filter_string = None
         self._file_handler = file_handler
         self._statusbar = Gtk.Statusbar()
-        self._statusbar.set_has_resize_grip(True)
         self.backend = library_backend.LibraryBackend()
         self.book_area = library_book_area._BookArea(self)
         self.control_area = library_control_area._ControlArea(self)
