@@ -46,7 +46,7 @@ class KeybindingEditorWindow(Gtk.ScrolledWindow):
             accel_cell = Gtk.CellRendererAccel()
             accel_cell.connect("accel-edited", self.get_on_accel_edited(idx))
             accel_cell.connect("accel-cleared", self.get_on_accel_cleared(idx))
-            tvc.pack_start(accel_cell, True, True, 0)
+            tvc.pack_start(accel_cell, True)
             tvc.add_attribute(accel_cell, "text", 3 + idx)
             tvc.add_attribute(accel_cell, "editable", 2)
 

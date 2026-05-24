@@ -657,9 +657,9 @@ class _PreferencesDialog(Gtk.Dialog):
         for text, value in options:
             model.append((text, value))
 
-        box = Gtk.ComboBox(model)
+        box = Gtk.ComboBox.new_with_model(model)
         renderer = Gtk.CellRendererText()
-        box.pack_start(renderer, True, True, 0)
+        box.pack_start(renderer, True)
         box.add_attribute(renderer, "text", 0)
 
         # Set active box option
@@ -794,7 +794,7 @@ class _PreferencesDialog(Gtk.Dialog):
         page_incr, digits, tooltip_text):
         value = prefs[prefkey] / scale
         adjustment = Gtk.Adjustment(value, lower, upper, step_incr, page_incr)
-        spinner = Gtk.SpinButton(adjustment, digits=digits)
+        spinner = Gtk.SpinButton(adjustment=adjustment, climb_rate=0.0, digits=digits)
         spinner.set_size_request(80, -1)
         spinner.connect('value_changed', self._spinner_cb, prefkey)
         if tooltip_text:
