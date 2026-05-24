@@ -50,8 +50,7 @@ setuptools.setup(
         'mcomix.messages' : get_data_patterns('mcomix/messages', '*.mo'),
         'mcomix.images' : images },
     entry_points = {
-        'console_scripts' : [ 'mcomix = mcomix.run:run' ],
-        'setuptools.installation': [ 'eggsecutable=mcomix.run:run' ],
+        'console_scripts' : [ 'mcomix3 = mcomix.run:run' ],
     },
     test_suite = "test",
     requires = ['pygtk (>=2.12.0)', 'PIL (>=1.15)'],
@@ -95,16 +94,16 @@ setuptools.setup(
              'mime/icons/48x48/application-x-cbt.png'])],
 
     # Package metadata
-    maintainer = 'Ark',
-    maintainer_email = 'https://sourceforge.net/u/aaku/profile/',
-    url = 'http://mcomix.sourceforge.net',
-    description = 'GTK comic book viewer',
-    long_description = 'MComix is a user-friendly, customizable image viewer. '
+    maintainer = 'Rippa The Hutt',
+    maintainer_email = '',
+    url = 'https://github.com/rippa-the-hutt/mcomix3',
+    description = 'GTK3 comic book viewer (Python 3 port)',
+    long_description = 'MComix3 is a user-friendly, customizable image viewer. '
         'It is specifically designed to handle comic books (both Western comics and manga) '
         'and supports a variety of container formats (including CBR, CBZ, CB7, CBT, LHA and PDF). '
-        'MComix is a fork of Comix.',
+        'MComix3 is a fork of MComix, ported to Python 3 and GTK3.',
     license = "License :: OSI Approved :: GNU General Public License (GPL)",
-    download_url = "http://sourceforge.net/projects/mcomix/files",
+    url = 'https://github.com/rippa-the-hutt/mcomix3',
     platforms = ['Operating System :: POSIX :: Linux',
         'Operating System :: Microsoft :: Windows',
         'Operating System :: POSIX :: BSD'],

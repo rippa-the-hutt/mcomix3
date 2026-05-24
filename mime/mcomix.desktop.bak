@@ -1,6 +1,6 @@
 [Desktop Entry]
 Version=1.0
-Name=MComix3
+Name=MComix
 Name[it]=MComix
 GenericName=Comic Book Viewer
 GenericName[sv]=Serieboksläsare
@@ -13,8 +13,8 @@ Comment[sv]=En serieboksläsare
 Comment[fr]=Visionneur d'images spécialisé dans la lecture des bandes dessinées
 Comment[pl]=Przeglądarka komiksów
 Comment[de]=Betrachter für Comic-Archive
-Exec=mcomix3 %f
-Icon=mcomix3
+Exec=mcomix %f
+Icon=mcomix
 Terminal=false
 Type=Application
 StartupNotify=true

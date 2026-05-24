@@ -10,6 +10,14 @@ It is written in **Python 3** and uses **GTK+ 3** through the **PyGObject** bind
 
 ## Installation
 
+### From Git
+
+```bash
+git clone https://github.com/rippa-the-hutt/mcomix3.git
+cd mcomix3
+python3 mcomixstarter.py
+```
+
 Simply run `mcomixstarter.py`:
 
 ```bash
