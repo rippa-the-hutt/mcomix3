@@ -8,7 +8,7 @@ import operator
 from mcomix import tools
 
 APPNAME = "MComix3"
-VERSION = "3.0.dev0"
+VERSION = "3.1"
 
 HOME_DIR = tools.get_home_directory()
 CONFIG_DIR = tools.get_config_directory()
