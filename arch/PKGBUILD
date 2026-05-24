@@ -24,7 +24,7 @@ makedepends=(
     'desktop-file-utils'
     'shared-mime-info'
 )
-url="https://github.com/rippa-the-hutt/mcomix3"
+source=("${pkgname}-${pkgver}.zip::https://github.com/rippa-the-hutt/mcomix3/archive/refs/tags/v${pkgver}.zip")
 sha256sums=('SKIP')
 noextract=()
 
