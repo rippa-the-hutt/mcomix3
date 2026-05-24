@@ -408,7 +408,13 @@ class EventHandler(object):
                 event.hardware_keycode, event.state, event.group)
 
         if code is not None:
-            keyval, egroup, level, consumed = code
+            # GTK3 translate_keyboard_accelerator returns
+            # (keyval, codes, group, level, consumed) instead of
+            # (keyval, egroup, level, consumed)
+            keyval = code[0]
+            egroup = code[2]
+            level = code[3]
+            consumed = code[4]
 
             # If the resulting key is upper case (i.e. SHIFT + key),
             # convert it to lower case and remove SHIFT from the consumed flags

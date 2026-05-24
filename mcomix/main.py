@@ -478,7 +478,9 @@ class MainWindow(Gtk.Window):
             if smartthumbbg:
                 self.thumbnailsidebar.change_thumbnail_background_color(bg_colour)
 
-            self._main_layout.window.freeze_updates()
+            win = self._main_layout.get_window()
+        if win:
+            win.freeze_updates()
 
             self._main_layout.set_size(*union_scaled_size)
             content_boxes = self.layout.get_content_boxes()
@@ -507,7 +509,9 @@ class MainWindow(Gtk.Window):
                     index = None
                 self.scroll_to_predefined(destination, index)
 
-            self._main_layout.window.thaw_updates()
+            win = self._main_layout.get_window()
+        if win:
+            win.thaw_updates()
         else:
             # Save scroll destination for when the page becomes available.
             self._last_scroll_destination = scroll_to
@@ -931,7 +935,8 @@ class MainWindow(Gtk.Window):
             for widget in widget_list:
                 if widget.get_visible():
                     axis = self._toggle_axis[widget]
-                    dimensions[axis] -= widget.size_request()[axis]
+                    size_req = widget.size_request()
+                    dimensions[axis] -= size_req.width if axis == 0 else size_req.height
 
         return tuple(dimensions)
 

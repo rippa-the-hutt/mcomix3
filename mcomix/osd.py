@@ -3,9 +3,12 @@
 
 import gi
 gi.require_version("Gtk", "3.0")
+gi.require_version("PangoCairo", "1.0")
 from gi.repository import Gtk, Gdk, GdkPixbuf
+import cairo
 from gi.repository import GObject, GLib
 from gi.repository import Pango
+from gi.repository import PangoCairo
 import textwrap
 
 from mcomix import image_tools
@@ -89,10 +92,11 @@ class OnScreenDisplay(object):
         if not self._last_osd_rect:
             return
 
-        last_region = Gdk.Rectangle(self._last_osd_rect)
-        if exclude_region:
-            last_region.subtract(exclude_region)
-        self._window._main_layout.get_bin_window().invalidate_region(last_region, True)
+        window = self._window._main_layout.get_bin_window()
+        if window:
+            x, y, w, h = self._last_osd_rect
+            window.invalidate_rect(Gdk.Rectangle(
+                int(x), int(y), int(w), int(h)), True)
 
         self._last_osd_rect = None
 
@@ -111,23 +115,28 @@ class OnScreenDisplay(object):
                 break
 
     def _draw_osd(self, layout, rect):
-        """ Draws the text specified in C{layout} into a box at C{rect}. """
-
-        osd_region = Gdk.Rectangle(rect)
-        draw_region = osd_region.copy()
-        if self._last_osd_rect:
-            draw_region.union(Gdk.Rectangle(self._last_osd_rect))
+        """ Draws the text specified in C{layout} into a box at C{rect}.
+        Uses Cairo drawing (GTK3 compatible). """
 
         window = self._window._main_layout.get_bin_window()
-        window.begin_paint_region(draw_region)
-        self._clear_osd(osd_region)
-
-        # Set up drawing context
-        gc = window.new_gc(foreground=image_tools.GTK_GDK_COLOR_BLACK,
-                           background=image_tools.GTK_GDK_COLOR_BLACK)
-
-        window.draw_rectangle(gc, True, *rect)
-        window.draw_layout(gc, rect[0] + 10, rect[1] + 10, layout, foreground=image_tools.GTK_GDK_COLOR_WHITE)
-        window.end_paint()
+        if not window:
+            return
+        
+        # Clear the area first
+        self._clear_osd()
+        
+        # Draw using Cairo
+        cr = window.cairo_create()
+        
+        # Draw background rectangle
+        x, y, w, h = rect
+        cr.set_source_rgba(0, 0, 0, 0.7)  # Semi-transparent black
+        cr.rectangle(x, y, w, h)
+        cr.fill()
+        
+        # Draw text
+        cr.set_source_rgb(1, 1, 1)  # White
+        cr.move_to(x + 10, y + 10)
+        PangoCairo.show_layout(cr, layout)
 
 # vim: expandtab:sw=4:ts=4
