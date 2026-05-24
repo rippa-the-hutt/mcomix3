@@ -8,6 +8,7 @@ arch=('any')
 url="https://github.com/rippa-the-hutt/mcomix3"
 license=('GPL2')
 depends=(
+    'python-setuptools',
     'python'
     'python-gobject'
     'gtk3'
@@ -20,16 +21,14 @@ optdepends=(
     'mupdf-tools: for PDF support'
 )
 makedepends=(
-    'python-setuptools'
     'desktop-file-utils'
     'shared-mime-info'
 )
-source=("${pkgname}-${pkgver}.zip::https://github.com/rippa-the-hutt/mcomix3/archive/refs/tags/v${pkgver}.zip")
-sha256sums=('SKIP')
-noextract=()
+source=("MComix3_v${pkgver}.tar.gz::https://github.com/rippa-the-hutt/mcomix3/releases/download/v${pkgver}/MComix3_v${pkgver}.tar.gz")
+sha256sums=('bb6729ae179805c1adaa51f5bb9d13e5edc33e0625b9e0692cd0e8075f8d03c6')
 
 package() {
-    cd "${srcdir}/${pkgname}-${pkgver}"
+    cd "${srcdir}/MComix3_v${pkgver}"
 
     # Install the Python package
     python3 setup.py install \
@@ -42,11 +41,11 @@ package() {
     # Create a wrapper script that works better with PATH
     install -Dm755 /dev/stdin "${pkgdir}/usr/bin/mcomix3" << 'EOF'
 #!/bin/sh
-exec /usr/bin/python3 -m mcomix.run "$@"
+exec /usr/bin/python3 /usr/share/mcomix3/mcomixstarter.py "$@"
 EOF
 
     # Install the mcomixstarter.py as an alternative entry point
-    install -Dm755 "${srcdir}/${pkgname}-${pkgver}/mcomixstarter.py" \
+    install -Dm755 "${srcdir}/MComix3_v${pkgver}/mcomixstarter.py" \
         "${pkgdir}/usr/share/${pkgname}/mcomixstarter.py"
 
     # Update desktop database (post-install)
