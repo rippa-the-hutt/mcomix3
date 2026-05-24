@@ -403,30 +403,9 @@ class EventHandler(object):
         ALL_ACCELS_MASK = (Gdk.ModifierType.CONTROL_MASK | Gdk.ModifierType.SHIFT_MASK |
                            Gdk.ModifierType.MOD1_MASK)
 
-        keymap = Gdk.Keymap.get_default()
-        code = keymap.translate_keyboard_state(
-                event.hardware_keycode, event.state, event.group)
-
-        if code is not None:
-            # GTK3 translate_keyboard_accelerator returns
-            # (keyval, codes, group, level, consumed) instead of
-            # (keyval, egroup, level, consumed)
-            keyval = code[0]
-            egroup = code[2]
-            level = code[3]
-            consumed = code[4]
-
-            # If the resulting key is upper case (i.e. SHIFT + key),
-            # convert it to lower case and remove SHIFT from the consumed flags
-            # to match how keys are registered (<Shift> + lowercase)
-            if (Gdk.keyval_is_upper(keyval) and
-                not Gdk.keyval_is_lower(keyval) and
-                event.state & Gdk.ModifierType.SHIFT_MASK):
-                keyval = Gdk.keyval_to_lower(keyval)
-                consumed &= ~Gdk.ModifierType.SHIFT_MASK
-
-            # 'consumed' is the modifier that was necessary to type the key
-            manager.execute((keyval, event.state & ~consumed & ALL_ACCELS_MASK))
+        keyval = event.keyval
+        consumed = 0
+        manager.execute((keyval, event.state & ~consumed & ALL_ACCELS_MASK))
 
         # ---------------------------------------------------------------
         # Register CTRL for scrolling only one page instead of two
@@ -444,7 +423,7 @@ class EventHandler(object):
           Gdk.KEY_KP_Down, Gdk.KEY_KP_Home, Gdk.KEY_KP_End,
           Gdk.KEY_KP_Page_Up, Gdk.KEY_KP_Page_Down) or
           (event.keyval == Gdk.KEY_Return and not
-          'GDK_MOD1_MASK' in event.state.value_names)):
+          event.state & Gdk.ModifierType.MOD1_MASK)):
 
             self._window.emit_stop_by_name('key_press_event')
             return True
@@ -470,7 +449,7 @@ class EventHandler(object):
         wheel flips pages in best fit mode and scrolls the scrollbars
         otherwise.
         """
-        if 'GDK_BUTTON2_MASK' in event.state.value_names:
+        if event.state & Gdk.ModifierType.BUTTON2_MASK:
             return
 
         self._scroll_protection = True
