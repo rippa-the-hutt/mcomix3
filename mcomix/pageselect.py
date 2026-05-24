@@ -1,13 +1,15 @@
 """pageselect.py - The dialog window for the page selector."""
 
-import gtk
+import gi
+gi.require_version("Gtk", "3.0")
+from gi.repository import Gtk, Gdk, GdkPixbuf
 
 from mcomix.preferences import prefs
 from mcomix.worker_thread import WorkerThread
 from mcomix import callback
 
 
-class Pageselector(gtk.Dialog):
+class Pageselector(Gtk.Dialog):
 
     """The Pageselector takes care of the popup page selector
     """
@@ -15,33 +17,33 @@ class Pageselector(gtk.Dialog):
     def __init__(self, window):
         self._window = window
         super(Pageselector, self).__init__("Go to page...", window,
-                                     gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT)
-        self.add_buttons(_('_Go'), gtk.RESPONSE_OK,
-                         _('_Cancel'), gtk.RESPONSE_CANCEL,)
-        self.set_default_response(gtk.RESPONSE_OK)
+                                     Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT)
+        self.add_buttons(_('_Go'), Gtk.ResponseType.OK,
+                         _('_Cancel'), Gtk.ResponseType.CANCEL,)
+        self.set_default_response(Gtk.ResponseType.OK)
         self.connect('response', self._response)
         self.set_resizable(True)
 
         self._number_of_pages = self._window.imagehandler.get_number_of_pages()
 
-        self._selector_adjustment = gtk.Adjustment(value=self._window.imagehandler.get_current_page(),
+        self._selector_adjustment = Gtk.Adjustment(value=self._window.imagehandler.get_current_page(),
                               lower=1,upper=self._number_of_pages,
                               step_incr=1, page_incr=1 )
 
         self._selector_adjustment.connect( 'value-changed', self._cb_value_changed )
 
-        self._page_selector = gtk.VScale(self._selector_adjustment)
+        self._page_selector = Gtk.VScale(self._selector_adjustment)
         self._page_selector.set_draw_value(False)
         self._page_selector.set_digits( 0 )
 
-        self._page_spinner = gtk.SpinButton(self._selector_adjustment)
+        self._page_spinner = Gtk.SpinButton(self._selector_adjustment)
         self._page_spinner.connect( 'changed', self._page_text_changed )
         self._page_spinner.set_activates_default(True)
         self._page_spinner.set_numeric(True)
-        self._pages_label = gtk.Label(_(' of %s') % self._number_of_pages)
+        self._pages_label = Gtk.Label(_(' of %s') % self._number_of_pages)
         self._pages_label.set_alignment(0, 0.5)
 
-        self._image_preview = gtk.Image()
+        self._image_preview = Gtk.Image()
         self._image_preview.set_size_request(
             prefs['thumbnail size'], prefs['thumbnail size'])
 
@@ -50,13 +52,13 @@ class Pageselector(gtk.Dialog):
                 prefs['pageselector height'])
 
         # Group preview image and page selector next to each other
-        preview_box = gtk.HBox()
+        preview_box = Gtk.HBox()
         preview_box.set_border_width(5)
         preview_box.set_spacing(5)
         preview_box.pack_start(self._image_preview, True)
         preview_box.pack_end(self._page_selector, False)
         # Below them, group selection spinner and current page label
-        selection_box = gtk.HBox()
+        selection_box = Gtk.HBox()
         selection_box.set_border_width(5)
         selection_box.pack_start(self._page_spinner, True)
         selection_box.pack_end(self._pages_label, False)
@@ -99,7 +101,7 @@ class Pageselector(gtk.Dialog):
                 control.set_value(page)
 
     def _response(self, widget, event, *args):
-        if event == gtk.RESPONSE_OK:
+        if event == Gtk.ResponseType.OK:
             self._window.set_page(int(self._selector_adjustment.value))
 
         self._window.imagehandler.page_available -= self._page_available

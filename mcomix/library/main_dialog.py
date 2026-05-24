@@ -1,7 +1,9 @@
 """library_main_dialog.py - The library dialog window."""
 
 import os
-import gtk
+import gi
+gi.require_version("Gtk", "3.0")
+from gi.repository import Gtk, Gdk, GdkPixbuf
 
 from mcomix.preferences import prefs
 from mcomix import i18n
@@ -20,14 +22,14 @@ _dialog = None
 # but is represented by this ID in the library's TreeModels.
 _COLLECTION_ALL = -1
 
-class _LibraryDialog(gtk.Window):
+class _LibraryDialog(Gtk.Window):
 
     """The library window. Automatically creates and uses a new
     library_backend.LibraryBackend when opened.
     """
 
     def __init__(self, window, file_handler):
-        super(_LibraryDialog, self).__init__(gtk.WINDOW_TOPLEVEL)
+        super(_LibraryDialog, self).__init__(Gtk.WindowType.TOPLEVEL)
 
         self._window = window
 
@@ -38,7 +40,7 @@ class _LibraryDialog(gtk.Window):
 
         self.filter_string = None
         self._file_handler = file_handler
-        self._statusbar = gtk.Statusbar()
+        self._statusbar = Gtk.Statusbar()
         self._statusbar.set_has_resize_grip(True)
         self.backend = library_backend.LibraryBackend()
         self.book_area = library_book_area._BookArea(self)
@@ -47,16 +49,16 @@ class _LibraryDialog(gtk.Window):
 
         self.backend.watchlist.new_files_found += self._new_files_found
 
-        table = gtk.Table(2, 2, False)
-        table.attach(self.collection_area, 0, 1, 0, 1, gtk.FILL,
-            gtk.EXPAND|gtk.FILL)
-        table.attach(self.book_area, 1, 2, 0, 1, gtk.EXPAND|gtk.FILL,
-            gtk.EXPAND|gtk.FILL)
-        table.attach(self.control_area, 0, 2, 1, 2, gtk.EXPAND|gtk.FILL,
-            gtk.FILL)
+        table = Gtk.Table(2, 2, False)
+        table.attach(self.collection_area, 0, 1, 0, 1, Gtk.AttachOptions.FILL,
+            Gtk.AttachOptions.EXPAND|Gtk.AttachOptions.FILL)
+        table.attach(self.book_area, 1, 2, 0, 1, Gtk.AttachOptions.EXPAND|Gtk.AttachOptions.FILL,
+            Gtk.AttachOptions.EXPAND|Gtk.AttachOptions.FILL)
+        table.attach(self.control_area, 0, 2, 1, 2, Gtk.AttachOptions.EXPAND|Gtk.AttachOptions.FILL,
+            Gtk.AttachOptions.FILL)
 
         if prefs['show statusbar']:
-            table.attach(self._statusbar, 0, 2, 2, 3, gtk.FILL, gtk.FILL)
+            table.attach(self._statusbar, 0, 2, 2, 3, Gtk.AttachOptions.FILL, Gtk.AttachOptions.FILL)
 
         self.add(table)
         self.show_all()
@@ -154,7 +156,7 @@ class _LibraryDialog(gtk.Window):
     def _key_press_event(self, widget, event, *args):
         """ Handle key press events for closing the library on Escape press. """
 
-        if event.keyval == gtk.keysyms.Escape:
+        if event.keyval == Gdk.KEY_Escape:
             self.hide()
 
 

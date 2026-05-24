@@ -1,7 +1,9 @@
 """slideshow.py - Slideshow handler."""
 
-import gtk
-import gobject
+import gi
+gi.require_version("Gtk", "3.0")
+from gi.repository import Gtk, Gdk, GdkPixbuf
+from gi.repository import GObject, GLib
 
 from mcomix.preferences import prefs
 
@@ -16,13 +18,13 @@ class Slideshow(object):
 
     def _start(self):
         if not self._running:
-            self._id = gobject.timeout_add(prefs['slideshow delay'], self._next)
+            self._id = GLib.timeout_add(prefs['slideshow delay'], self._next)
             self._running = True
             self._window.update_title()
 
     def _stop(self):
         if self._running:
-            gobject.source_remove(self._id)
+            GLib.source_remove(self._id)
             self._running = False
             self._window.update_title()
 
@@ -39,11 +41,11 @@ class Slideshow(object):
         """Toggle a slideshow on or off."""
         if action.get_active():
             self._start()
-            self._window.uimanager.get_widget('/Tool/slideshow').set_stock_id( gtk.STOCK_MEDIA_STOP )
+            self._window.uimanager.get_widget('/Tool/slideshow').set_stock_id( "Stop" )
             self._window.uimanager.get_widget('/Tool/slideshow').set_tooltip_text( _('Stop slideshow')  )
         else:
             self._stop()
-            self._window.uimanager.get_widget('/Tool/slideshow').set_stock_id( gtk.STOCK_MEDIA_PLAY )
+            self._window.uimanager.get_widget('/Tool/slideshow').set_stock_id( "Play" )
             self._window.uimanager.get_widget('/Tool/slideshow').set_tooltip_text( _('Start slideshow') )
 
     def is_running(self):

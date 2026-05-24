@@ -1,12 +1,14 @@
 """status.py - Statusbar for main window."""
 
-import gtk
+import gi
+gi.require_version("Gtk", "3.0")
+from gi.repository import Gtk, Gdk, GdkPixbuf
 
 from mcomix import i18n
 from mcomix import constants
 from mcomix.preferences import prefs
 
-class Statusbar(gtk.EventBox):
+class Statusbar(Gtk.EventBox):
 
     SPACING = 5
 
@@ -16,11 +18,11 @@ class Statusbar(gtk.EventBox):
         self._loading = True
 
         # Status text, page number, file number, resolution, path, filename, filesize
-        self.status = gtk.Statusbar()
+        self.status = Gtk.Statusbar()
         self.add(self.status)
 
         # Create popup menu for enabling/disabling status boxes.
-        self.ui_manager = gtk.UIManager()
+        self.ui_manager = Gtk.UIManager()
         self.tooltipstatus = TooltipStatusHelper(self.ui_manager, self.status)
         ui_description = """
         <ui>
@@ -36,7 +38,7 @@ class Statusbar(gtk.EventBox):
         """
         self.ui_manager.add_ui_from_string(ui_description)
 
-        actiongroup = gtk.ActionGroup('mcomix-statusbar')
+        actiongroup = Gtk.ActionGroup('mcomix-statusbar')
         actiongroup.add_toggle_actions([
             ('pagenumber', None, _('Show page numbers'), None, None,
                 self.toggle_status_visibility),
@@ -54,7 +56,7 @@ class Statusbar(gtk.EventBox):
 
         # Hook mouse release event
         self.connect('button-release-event', self._button_released)
-        self.set_events(gtk.gdk.BUTTON_PRESS_MASK|gtk.gdk.BUTTON_RELEASE_MASK)
+        self.set_events(Gdk.EventMask.BUTTON_PRESS_MASK|Gdk.EventMask.BUTTON_RELEASE_MASK)
 
         # Default status information
         self._page_info = ''
@@ -138,12 +140,12 @@ class Statusbar(gtk.EventBox):
         self.status.push(0, space + text)
 
     def push(self, context_id, message):
-        """ Compatibility with gtk.Statusbar. """
+        """ Compatibility with Gtk.Statusbar. """
         assert context_id >= 0
         self.status.push(context_id + 1, message)
 
     def pop(self, context_id):
-        """ Compatibility with gtk.Statusbar. """
+        """ Compatibility with Gtk.Statusbar. """
         assert context_id >= 0
         self.status.pop(context_id + 1)
 
@@ -223,7 +225,7 @@ class Statusbar(gtk.EventBox):
 
 
 class TooltipStatusHelper(object):
-    """ Attaches to a L{gtk.UIManager} to provide statusbar tooltips when
+    """ Attaches to a L{Gtk.UIManager} to provide statusbar tooltips when
     selecting menu items. """
 
     def __init__(self, uimanager, statusbar):
@@ -236,7 +238,7 @@ class TooltipStatusHelper(object):
         """ Connects the widget's selection handlers to the status bar update.
         """
         tooltip = action.get_property('tooltip')
-        if isinstance(widget, gtk.MenuItem) and tooltip:
+        if isinstance(widget, Gtk.MenuItem) and tooltip:
             cid = widget.connect('select', self._on_item_select, tooltip)
             cid2 = widget.connect('deselect', self._on_item_deselect)
             setattr(widget, 'app::connect-ids', (cid, cid2))

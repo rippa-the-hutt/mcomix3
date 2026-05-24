@@ -1,6 +1,8 @@
 """file_chooser_main_dialog.py - Custom FileChooserDialog implementations."""
 
-import gtk
+import gi
+gi.require_version("Gtk", "3.0")
+from gi.repository import Gtk, Gdk, GdkPixbuf
 
 from mcomix.preferences import prefs
 from mcomix import file_chooser_base_dialog

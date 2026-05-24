@@ -56,7 +56,7 @@ class ImageHandler(object):
         """Return the pixbuf indexed by <index> from cache.
         Pixbufs not found in cache are fetched from disk first.
         """
-        pixbuf = image_tools.MISSING_IMAGE_ICON
+        pixbuf = image_tools.get_missing_pixbuf()
 
         if index not in self._raw_pixbufs:
             self._wait_on_page(index + 1)
@@ -66,7 +66,7 @@ class ImageHandler(object):
                 self._raw_pixbufs[index] = pixbuf
                 tools.garbage_collect()
             except Exception as e:
-                self._raw_pixbufs[index] = image_tools.MISSING_IMAGE_ICON
+                self._raw_pixbufs[index] = image_tools.get_missing_pixbuf()
                 log.error('Could not load pixbuf for page %u: %r', index + 1, e)
         else:
             try:
@@ -414,7 +414,7 @@ class ImageHandler(object):
         except Exception:
             log.debug("Failed to create thumbnail for image `%s':\n%s",
                       path, traceback.format_exc())
-            return image_tools.MISSING_IMAGE_ICON
+            return image_tools.get_missing_pixbuf()
 
     def _wait_on_page(self, page, check_only=False):
         """Block the running (main) thread until the file corresponding to

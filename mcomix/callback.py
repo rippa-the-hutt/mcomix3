@@ -3,7 +3,9 @@
 import traceback
 import weakref
 import threading
-import gobject
+import gi
+gi.require_version("Gtk", "3.0")
+from gi.repository import GObject, GLib
 
 from mcomix import log
 
@@ -33,7 +35,7 @@ class CallbackList(object):
             return result
         else:
             # Call this method again in the main thread.
-            gobject.idle_add(self.__mainthread_call, (args, kwargs))
+            GLib.idle_add(self.__mainthread_call, (args, kwargs))
 
     def __iadd__(self, function):
         """ Support for 'method += callback_function' syntax. """
@@ -55,7 +57,7 @@ class CallbackList(object):
 
     def __mainthread_call(self, params):
         """ Helper function to execute code in the main thread.
-        This will be called by gobject.idle_add, with <params> being a tuple
+        This will be called by GLib.idle_add, with <params> being a tuple
         of (args, kwargs). """
 
         result = self(*params[0], **params[1])

@@ -2,7 +2,9 @@
 """
 
 import urllib
-import gtk
+import gi
+gi.require_version("Gtk", "3.0")
+from gi.repository import Gtk, Gdk, GdkPixbuf
 
 from mcomix.preferences import prefs
 from mcomix import constants
@@ -398,10 +400,10 @@ class EventHandler(object):
         manager = keybindings.keybinding_manager(self._window)
         # Some keys can only be pressed with certain modifiers that
         # are irrelevant to the actual hotkey. Find out and ignore them.
-        ALL_ACCELS_MASK = (gtk.gdk.CONTROL_MASK | gtk.gdk.SHIFT_MASK |
-                           gtk.gdk.MOD1_MASK)
+        ALL_ACCELS_MASK = (Gdk.ModifierType.CONTROL_MASK | Gdk.ModifierType.SHIFT_MASK |
+                           Gdk.ModifierType.MOD1_MASK)
 
-        keymap = gtk.gdk.keymap_get_default()
+        keymap = Gdk.Keymap.get_default()
         code = keymap.translate_keyboard_state(
                 event.hardware_keycode, event.state, event.group)
 
@@ -411,11 +413,11 @@ class EventHandler(object):
             # If the resulting key is upper case (i.e. SHIFT + key),
             # convert it to lower case and remove SHIFT from the consumed flags
             # to match how keys are registered (<Shift> + lowercase)
-            if (gtk.gdk.keyval_is_upper(keyval) and
-                not gtk.gdk.keyval_is_lower(keyval) and
-                event.state & gtk.gdk.SHIFT_MASK):
-                keyval = gtk.gdk.keyval_to_lower(keyval)
-                consumed &= ~gtk.gdk.SHIFT_MASK
+            if (Gdk.keyval_is_upper(keyval) and
+                not Gdk.keyval_is_lower(keyval) and
+                event.state & Gdk.ModifierType.SHIFT_MASK):
+                keyval = Gdk.keyval_to_lower(keyval)
+                consumed &= ~Gdk.ModifierType.SHIFT_MASK
 
             # 'consumed' is the modifier that was necessary to type the key
             manager.execute((keyval, event.state & ~consumed & ALL_ACCELS_MASK))
@@ -431,11 +433,11 @@ class EventHandler(object):
         # We kill the signals here for the Up, Down, Space and Enter keys,
         # or they will start fiddling with the thumbnail selector (bad).
         # ----------------------------------------------------------------
-        if (event.keyval in (gtk.keysyms.Up, gtk.keysyms.Down,
-          gtk.keysyms.space, gtk.keysyms.KP_Enter, gtk.keysyms.KP_Up,
-          gtk.keysyms.KP_Down, gtk.keysyms.KP_Home, gtk.keysyms.KP_End,
-          gtk.keysyms.KP_Page_Up, gtk.keysyms.KP_Page_Down) or
-          (event.keyval == gtk.keysyms.Return and not
+        if (event.keyval in (Gdk.KEY_Up, Gdk.KEY_Down,
+          Gdk.KEY_space, gtk.keysyms.KP_Enter, Gdk.KEY_KP_Up,
+          Gdk.KEY_KP_Down, Gdk.KEY_KP_Home, Gdk.KEY_KP_End,
+          Gdk.KEY_KP_Page_Up, Gdk.KEY_KP_Page_Down) or
+          (event.keyval == Gdk.KEY_Return and not
           'GDK_MOD1_MASK' in event.state.value_names)):
 
             self._window.emit_stop_by_name('key_press_event')
@@ -467,29 +469,29 @@ class EventHandler(object):
 
         self._scroll_protection = True
 
-        if event.direction == gtk.gdk.SCROLL_UP:
-            if event.state & gtk.gdk.CONTROL_MASK:
+        if event.direction == Gdk.ScrollDirection.UP:
+            if event.state & Gdk.ModifierType.CONTROL_MASK:
                 self._window.manual_zoom_in()
             elif prefs['smart scroll']:
                 self._smart_scroll_up(prefs['number of pixels to scroll per mouse wheel event'])
             else:
                 self._scroll_with_flipping(0, -prefs['number of pixels to scroll per mouse wheel event'])
 
-        elif event.direction == gtk.gdk.SCROLL_DOWN:
-            if event.state & gtk.gdk.CONTROL_MASK:
+        elif event.direction == Gdk.ScrollDirection.DOWN:
+            if event.state & Gdk.ModifierType.CONTROL_MASK:
                 self._window.manual_zoom_out()
             elif prefs['smart scroll']:
                 self._smart_scroll_down(prefs['number of pixels to scroll per mouse wheel event'])
             else:
                 self._scroll_with_flipping(0, prefs['number of pixels to scroll per mouse wheel event'])
 
-        elif event.direction == gtk.gdk.SCROLL_RIGHT:
+        elif event.direction == Gdk.ScrollDirection.RIGHT:
             if not self._window.is_manga_mode:
                 self._window.flip_page(+1)
             else:
                 self._previous_page_with_protection()
 
-        elif event.direction == gtk.gdk.SCROLL_LEFT:
+        elif event.direction == Gdk.ScrollDirection.LEFT:
             if not self._window.is_manga_mode:
                 self._previous_page_with_protection()
             else:
@@ -511,8 +513,8 @@ class EventHandler(object):
             self._window.actiongroup.get_action('lens').set_active(True)
 
         elif (event.button == 3 and
-              not event.state & gtk.gdk.MOD1_MASK and
-              not event.state & gtk.gdk.SHIFT_MASK):
+              not event.state & Gdk.ModifierType.MOD1_MASK and
+              not event.state & Gdk.ModifierType.SHIFT_MASK):
             self._window.cursor_handler.set_cursor_type(constants.NORMAL_CURSOR)
             self._window.popup.popup(None, None, None, event.button,
                 event.time)
@@ -531,7 +533,7 @@ class EventHandler(object):
                 event.y_root == self._pressed_pointer_pos_y and \
                 not self._window.was_out_of_focus:
 
-                if event.state & gtk.gdk.SHIFT_MASK:
+                if event.state & Gdk.ModifierType.SHIFT_MASK:
                     self._flip_page(10)
                 else:
                     self._flip_page(1)
@@ -543,9 +545,9 @@ class EventHandler(object):
             self._window.actiongroup.get_action('lens').set_active(False)
 
         elif event.button == 3:
-            if event.state & gtk.gdk.MOD1_MASK:
+            if event.state & Gdk.ModifierType.MOD1_MASK:
                 self._flip_page(-1)
-            elif event.state & gtk.gdk.SHIFT_MASK:
+            elif event.state & Gdk.ModifierType.SHIFT_MASK:
                 self._flip_page(-10)
 
     def mouse_move_event(self, widget, event):
@@ -755,8 +757,8 @@ def _get_latest_event_of_same_type(event):
     """
     events = []
 
-    while gtk.gdk.events_pending():
-        queued_event = gtk.gdk.event_get()
+    while Gdk.events_pending():
+        queued_event = Gdk.event_get()
 
         if queued_event is not None:
 

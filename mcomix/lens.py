@@ -1,7 +1,9 @@
 """lens.py - Magnifying lens."""
 
 import math
-import gtk
+import gi
+gi.require_version("Gtk", "3.0")
+from gi.repository import Gtk, Gdk, GdkPixbuf
 
 from mcomix.preferences import prefs
 from mcomix import image_tools
@@ -57,19 +59,19 @@ class MagnifyingLens(object):
         with it; <x> and <y> are the positions of the cursor within the
         main window layout area.
         """
-        if self._window.images[0].get_storage_type() not in (gtk.IMAGE_PIXBUF,
-            gtk.IMAGE_ANIMATION):
+        if self._window.images[0].get_storage_type() not in (Gtk.ImageType.PIXBUF,
+            Gtk.ImageType.ANIMATION):
             return
 
         rectangle = self._calculate_lens_rect(x, y, prefs['lens size'], prefs['lens size'])
         pixbuf = self._get_lens_pixbuf(x, y)
 
         # Region used to draw the pixbuf
-        lens_region = gtk.gdk.region_rectangle(rectangle)
+        lens_region = Gdk.Rectangle(rectangle)
         # Combined regions (area that will be drawn to in this operation
         full_region = lens_region.copy()
         if self._last_lens_rect:
-            last_region = gtk.gdk.region_rectangle(self._last_lens_rect)
+            last_region = Gdk.Rectangle(self._last_lens_rect)
             full_region.union(last_region)
 
         window = self._area.get_bin_window()
@@ -104,7 +106,7 @@ class MagnifyingLens(object):
         if not self._last_lens_rect:
             return
 
-        last_region = gtk.gdk.region_rectangle(self._last_lens_rect)
+        last_region = Gdk.Rectangle(self._last_lens_rect)
         if current_lens_region:
             last_region.subtract(current_lens_region)
 
@@ -124,7 +126,7 @@ class MagnifyingLens(object):
         """Get a pixbuf containing the appropiate image data for the lens
         where <x> and <y> are the positions of the cursor.
         """
-        canvas = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8,
+        canvas = GdkPixbuf.Pixbuf(GdkPixbuf.Colorspace.RGB, True, 8,
             prefs['lens size'], prefs['lens size'])
         canvas.fill(image_tools.convert_rgb16list_to_rgba8int(self._window.get_bg_colour()))
         cb = self._window.layout.get_content_boxes()
@@ -216,13 +218,13 @@ class MagnifyingLens(object):
 
         if rotation == 90:
             subpixbuf = subpixbuf.rotate_simple(
-                gtk.gdk.PIXBUF_ROTATE_CLOCKWISE)
+                GdkPixbuf.PixbufRotation.CLOCKWISE)
         elif rotation == 180:
             subpixbuf = subpixbuf.rotate_simple(
-                gtk.gdk.PIXBUF_ROTATE_UPSIDEDOWN)
+                GdkPixbuf.PixbufRotation.UPSIDEDOWN)
         elif rotation == 270:
             subpixbuf = subpixbuf.rotate_simple(
-                gtk.gdk.PIXBUF_ROTATE_COUNTERCLOCKWISE)
+                GdkPixbuf.PixbufRotation.COUNTERCLOCKWISE)
         if prefs['horizontal flip']:
             subpixbuf = subpixbuf.flip(horizontal=True)
         if prefs['vertical flip']:
@@ -241,7 +243,7 @@ class MagnifyingLens(object):
 
         if subpixbuf.get_has_alpha() and prefs['checkered bg for transparent images']:
             subpixbuf = subpixbuf.composite_color_simple(subpixbuf.get_width(), subpixbuf.get_height(),
-                gtk.gdk.INTERP_NEAREST, 255, 8, 0x777777, 0x999999)
+                GdkPixbuf.InterpType.NEAREST, 255, 8, 0x777777, 0x999999)
 
         subpixbuf.copy_area(0, 0, subpixbuf.get_width(),
             subpixbuf.get_height(), canvas, dest_x, dest_y)

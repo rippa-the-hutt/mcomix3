@@ -5,7 +5,9 @@ import os
 import sys
 import tempfile
 
-import gtk, gobject
+import gi
+gi.require_version("Gtk", "3.0")
+from gi.repository import Gtk, Gdk, GdkPixbuf, GObject, GLib
 
 from collections import namedtuple
 from PIL import Image, ImageDraw
@@ -81,7 +83,7 @@ def get_image_path(basename):
     return get_testfile_path('images', basename)
 
 def new_pixbuf(size, with_alpha, fill_colour):
-    pixbuf = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB,
+    pixbuf = GdkPixbuf.Pixbuf(GdkPixbuf.Colorspace.RGB,
                             with_alpha, 8, size[0], size[1])
     pixbuf.fill(fill_colour)
     return pixbuf
@@ -128,9 +130,9 @@ def hexdump(data, group_size=4):
     return [line for line in xhexdump(data, group_size=group_size)]
 
 def composite_image(im1, im2):
-    if isinstance(im1, gtk.gdk.Pixbuf):
+    if isinstance(im1, GdkPixbuf.Pixbuf):
         im1 = image_tools.pixbuf_to_pil(im1)
-    if isinstance(im2, gtk.gdk.Pixbuf):
+    if isinstance(im2, GdkPixbuf.Pixbuf):
         im2 = image_tools.pixbuf_to_pil(im2)
     im = Image.new('RGBA',
                    (im1.size[0] + im2.size[0],
@@ -167,7 +169,7 @@ class ImageToolsTest(object):
                 'diff': diff_fmt % args,
             })
         def info(im):
-            if isinstance(im, gtk.gdk.Pixbuf):
+            if isinstance(im, GdkPixbuf.Pixbuf):
                 width, stride = im.get_width(), im.get_rowstride()
                 line_size = width * im.get_n_channels()
                 if stride == line_size:
@@ -250,7 +252,7 @@ class ImageToolsTest(object):
         if self.use_pil:
             exception = IOError
         else:
-            exception = gobject.GError
+            exception = GLib.GError
         self.assertRaises(exception, image_tools.load_pixbuf, os.devnull)
 
     def test_load_pixbuf_size_basic(self):
@@ -324,7 +326,7 @@ class ImageToolsTest(object):
         if self.use_pil:
             exception = IOError
         else:
-            exception = gobject.GError
+            exception = GLib.GError
         self.assertRaises(exception, image_tools.load_pixbuf_size, os.devnull, 50, 50)
 
     # Expose a rounding error bug in load_pixbuf_size.

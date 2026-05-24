@@ -1,10 +1,12 @@
 """preferences_page.py - MComix preference page."""
 
-import gtk
+import gi
+gi.require_version("Gtk", "3.0")
+from gi.repository import Gtk, Gdk, GdkPixbuf
 
 from mcomix import preferences_section
 
-class _PreferencePage(gtk.VBox):
+class _PreferencePage(Gtk.VBox):
 
     """The _PreferencePage is a conveniece class for making one "page"
     in a preferences-style dialog that contains one or more
@@ -32,7 +34,7 @@ class _PreferencePage(gtk.VBox):
         or two items. If the left item is a label it is automatically
         aligned properly.
         """
-        if isinstance(left_item, gtk.Label):
+        if isinstance(left_item, Gtk.Label):
             left_item.set_alignment(0, 0.5)
 
         if right_item is None:

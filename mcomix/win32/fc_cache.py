@@ -33,12 +33,10 @@ def update(args=[], notification_delay=3, notification_duration=3):
 
     i18n.install_gettext()
 
-    import pygtk
-    pygtk.require('2.0')
-    import gtk, gobject
-    gobject.threads_init()
+    from gi.repository import Gtk, Gdk, GdkPixbuf, GObject, GLib
+    GLib.threads_init()
 
-    class Window(gtk.Window):
+    class Window(Gtk.Window):
 
         def __init__(self):
             super(Window, self).__init__()
@@ -48,15 +46,15 @@ def update(args=[], notification_delay=3, notification_duration=3):
             self.set_resizable(False)
             self.set_deletable(False)
             self._displayed = False
-            vbox = gtk.VBox(spacing=5)
-            label = gtk.Label(_('Updating font cache. This may take a few minutes.'))
+            vbox = Gtk.VBox(spacing=5)
+            label = Gtk.Label(_('Updating font cache. This may take a few minutes.'))
             vbox.pack_start(label)
-            self._spinner = gtk.Spinner()
+            self._spinner = Gtk.Spinner()
             vbox.pack_start(self._spinner, expand=False, fill=False)
             vbox.show_all()
             self.add(vbox)
             self.set_geometry_hints(vbox)
-            gobject.timeout_add(200, self._on_ping)
+            GLib.timeout_add(200, self._on_ping)
 
         def _on_ping(self):
             now = time.time()
@@ -71,7 +69,7 @@ def update(args=[], notification_delay=3, notification_duration=3):
                 if not notif_time < now < end_time:
                     # Dialog is not being shown or it has already
                     # been displayed for the required amount of time.
-                    gtk.main_quit()
+                    Gtk.main_quit()
                     return False
             if not self._displayed:
                 # Show dialog.
@@ -115,7 +113,7 @@ def update(args=[], notification_delay=3, notification_duration=3):
         os.environ['FONTCONFIG_FILE'] = config
         try:
             win = Window()
-            gtk.main()
+            Gtk.main()
         finally:
             if previous_config is None:
                 del os.environ['FONTCONFIG_FILE']

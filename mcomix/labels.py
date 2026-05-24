@@ -1,16 +1,18 @@
-"""labels.py - gtk.Label convenience classes."""
+"""labels.py - Gtk.Label convenience classes."""
 
-import gtk
-import pango
+import gi
+gi.require_version("Gtk", "3.0")
+from gi.repository import Gtk, Gdk, GdkPixbuf
+from gi.repository import Pango
 
-class FormattedLabel(gtk.Label):
+class FormattedLabel(Gtk.Label):
 
     """FormattedLabel keeps a label always formatted with some pango weight,
     style and scale, even when new text is set using set_text().
     """
 
-    def __init__(self, text='', weight=pango.WEIGHT_NORMAL,
-      style=pango.STYLE_NORMAL, scale=1.0):
+    def __init__(self, text='', weight=Pango.Weight.NORMAL,
+      style=Pango.Style.NORMAL, scale=1.0):
         super(FormattedLabel, self).__init__(text)
         self._weight = weight
         self._style = style
@@ -18,15 +20,15 @@ class FormattedLabel(gtk.Label):
         self._format()
 
     def set_text(self, text):
-        gtk.Label.set_text(self, text)
+        Gtk.Label.set_text(self, text)
         self._format()
 
     def _format(self):
         text_len = len(self.get_text())
-        attrlist = pango.AttrList()
-        attrlist.insert(pango.AttrWeight(self._weight, 0, text_len))
-        attrlist.insert(pango.AttrStyle(self._style, 0, text_len))
-        attrlist.insert(pango.AttrScale(self._scale, 0, text_len))
+        attrlist = Pango.AttrList()
+        attrlist.insert(Pango.AttrWeight(self._weight, 0, text_len))
+        attrlist.insert(Pango.AttrStyle(self._style, 0, text_len))
+        attrlist.insert(Pango.AttrScale(self._scale, 0, text_len))
         self.set_attributes(attrlist)
 
 class BoldLabel(FormattedLabel):
@@ -34,14 +36,14 @@ class BoldLabel(FormattedLabel):
     """A FormattedLabel that is always bold and otherwise normal."""
 
     def __init__(self, text=''):
-        super(BoldLabel, self).__init__(text=text, weight=pango.WEIGHT_BOLD)
+        super(BoldLabel, self).__init__(text=text, weight=Pango.Weight.BOLD)
 
 class ItalicLabel(FormattedLabel):
 
     """A FormattedLabel that is always italic and otherwise normal."""
 
     def __init__(self, text=''):
-        super(ItalicLabel, self).__init__(text=text, style=pango.STYLE_ITALIC)
+        super(ItalicLabel, self).__init__(text=text, style=Pango.Style.ITALIC)
 
 
 # vim: expandtab:sw=4:ts=4

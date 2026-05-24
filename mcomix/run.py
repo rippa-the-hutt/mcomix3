@@ -11,6 +11,10 @@ if __name__ == '__main__':
 
 # These modules must not depend on GTK, pkg_resources, PIL,
 # or any other optional libraries.
+import gi
+gi.require_version("Gtk", "3.0")
+from gi.repository import GLib
+
 from mcomix import (
     constants,
     log,
@@ -175,40 +179,36 @@ def run():
 
     # Check for PyGTK and PIL dependencies.
     try:
-        import pygtk
-        pygtk.require('2.0')
-
-        import gtk
-        assert gtk.gtk_version >= (2, 12, 0)
-        assert gtk.pygtk_version >= (2, 12, 0)
-
-        import gobject
-        gobject.threads_init()
+        from gi.repository import Gtk, Gdk, GdkPixbuf, GLib
+        assert Gtk.get_major_version() >= 3
+        GLib.threads_init()
 
     except AssertionError:
-        log.error( _("You do not have the required versions of GTK+ and PyGTK installed.") )
-        log.error( _('Installed GTK+ version is: %s') % \
-                  '.'.join([str(n) for n in gtk.gtk_version]) )
-        log.error( _('Required GTK+ version is: 2.12.0 or higher') )
-        log.error( _('Installed PyGTK version is: %s') % \
-                  '.'.join([str(n) for n in gtk.pygtk_version]) )
-        log.error( _('Required PyGTK version is: 2.12.0 or higher') )
+        log.error( _("You do not have the required versions of GTK+ installed.") )
+        log.error( _('Installed GTK+ version is: %s') % Gtk.get_major_version() )
+        log.error( _('Required GTK+ version is: 3.0.0 or higher') )
         wait_and_exit()
 
     except ImportError:
-        log.error( _('Required PyGTK version is: 2.12.0 or higher') )
-        log.error( _('No version of PyGTK was found on your system.') )
+        log.error( _('Required GTK+ version is: 3.0.0 or higher') )
+        log.error( _('No version of GTK+ was found on your system.') )
         log.error( _('This error might be caused by missing GTK+ libraries.') )
         wait_and_exit()
 
     try:
         import PIL.Image
-        assert PIL.Image.VERSION >= '1.1.5'
+        # Pillow 10+ removed PILLOW_VERSION/VERSION attributes
+        try:
+            from PIL import PILLOW_VERSION as PIL_VER
+        except ImportError:
+            try:
+                from PIL import __version__ as PIL_VER
+            except ImportError:
+                PIL_VER = '10.0.0'  # Assume recent enough
+        assert tuple(int(x) for x in PIL_VER.split('.')[:2]) >= (1, 1)
 
     except AssertionError:
-        log.error( _("You don't have the required version of the Python Imaging"), end=' ')
-        log.error( _('Library (PIL) installed.') )
-        log.error( _('Installed PIL version is: %s') % Image.VERSION )
+        log.error( _("You don't have the required version of the Python Imaging Library (PIL) installed.") )
         log.error( _('Required PIL version is: 1.1.5 or higher') )
         wait_and_exit()
 
@@ -241,9 +241,9 @@ def run():
 
     # Some languages require a RTL layout
     if preferences.prefs['language'] in ('he', 'fa'):
-        gtk.widget_set_default_direction(gtk.TEXT_DIR_RTL)
+        Gtk.widget_set_default_default_direction(Gtk.TextDirection.RTL)
 
-    gtk.gdk.set_program_class(constants.APPNAME)
+    Gdk.set_program_class(constants.APPNAME)
 
     from mcomix import main
     window = main.MainWindow(fullscreen = opts.fullscreen, is_slideshow = opts.slideshow,
@@ -261,9 +261,9 @@ def run():
                 pass
         signal.signal(signal.SIGCHLD, on_sigchld)
 
-    signal.signal(signal.SIGTERM, lambda: gobject.idle_add(window.terminate_program))
+    signal.signal(signal.SIGTERM, lambda: GLib.idle_add(window.terminate_program))
     try:
-        gtk.main()
+        Gtk.main()
     except KeyboardInterrupt: # Will not always work because of threading.
         window.terminate_program()
 

@@ -91,9 +91,9 @@ def complete_library_zip():
 def copy_gtk_runtime_files():
 	""" Copies files from the GTK runtime into the distribution directory. """
 
-	import gtk
+	from gi.repository import Gtk, Gdk, GdkPixbuf
 	runtime_dir = os.path.join(
-			os.path.dirname(os.path.dirname(gtk.__file__)),
+			os.path.dirname(os.path.dirname()),
 			'runtime')
 
 	if not os.path.isdir(runtime_dir):

@@ -2,9 +2,11 @@
 
 import urllib
 import itertools
-import gtk
+import gi
+gi.require_version("Gtk", "3.0")
+from gi.repository import Gtk, Gdk, GdkPixbuf
 import glib
-import gobject
+from gi.repository import GObject, GLib
 import sys
 
 from mcomix import preferences
@@ -14,11 +16,11 @@ from mcomix import archive_tools
 from mcomix import image_tools
 from mcomix import log
 
-class RecentFilesMenu(gtk.RecentChooserMenu):
+class RecentFilesMenu(Gtk.RecentChooserMenu):
 
     def __init__(self, ui, window):
         self._window = window
-        self._manager = gtk.recent_manager_get_default()
+        self._manager = Gtk.RecentManager.get_default()
         super(RecentFilesMenu, self).__init__(self._manager)
 
         self.set_sort_type(gtk.RECENT_SORT_MRU)
@@ -75,7 +77,7 @@ class RecentFilesMenu(gtk.RecentChooserMenu):
         """ Removes all entries to recently opened files. """
         try:
             self._manager.purge_items()
-        except gobject.GError as error:
+        except GLib.GError as error:
             log.debug(error)
 
 

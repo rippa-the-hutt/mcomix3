@@ -1,9 +1,11 @@
 """ osd.py - Onscreen display showing currently opened file. """
 # -*- coding: utf-8 -*-
 
-import gtk
-import gobject
-import pango
+import gi
+gi.require_version("Gtk", "3.0")
+from gi.repository import Gtk, Gdk, GdkPixbuf
+from gi.repository import GObject, GLib
+from gi.repository import Pango
 import textwrap
 
 from mcomix import image_tools
@@ -35,8 +37,8 @@ class OnScreenDisplay(object):
 
         # Set up font information
         font = layout.get_context().get_font_description()
-        font.set_weight(pango.WEIGHT_BOLD)
-        layout.set_alignment(pango.ALIGN_CENTER)
+        font.set_weight(Pango.Weight.BOLD)
+        layout.set_alignment(Pango.Alignment.CENTER)
 
         # Scale font to fit within the screen size
         max_width, max_height = self._window.get_visible_area_size()
@@ -56,13 +58,13 @@ class OnScreenDisplay(object):
 
         self._last_osd_rect = rect
         if self._timeout_event:
-            gobject.source_remove(self._timeout_event)
-        self._timeout_event = gobject.timeout_add_seconds(OnScreenDisplay.TIMEOUT, self.clear)
+            GLib.source_remove(self._timeout_event)
+        self._timeout_event = GLib.timeout_add_seconds(OnScreenDisplay.TIMEOUT, self.clear)
 
     def clear(self):
         """ Removes the OSD. """
         if self._timeout_event:
-            gobject.source_remove(self._timeout_event)
+            GLib.source_remove(self._timeout_event)
         self._timeout_event = None
         self._clear_osd()
         return 0 # To unregister gobject timer event
@@ -87,7 +89,7 @@ class OnScreenDisplay(object):
         if not self._last_osd_rect:
             return
 
-        last_region = gtk.gdk.region_rectangle(self._last_osd_rect)
+        last_region = Gdk.Rectangle(self._last_osd_rect)
         if exclude_region:
             last_region.subtract(exclude_region)
         self._window._main_layout.get_bin_window().invalidate_region(last_region, True)
@@ -100,7 +102,7 @@ class OnScreenDisplay(object):
         SIZE_MIN, SIZE_MAX = 10, 60
         for font_size in range(SIZE_MIN, SIZE_MAX, 5):
             old_size = font.get_size()
-            font.set_size(font_size * pango.SCALE)
+            font.set_size(font_size * Pango.SCALE)
             layout.set_font_description(font)
 
             if layout.get_pixel_size()[0] > max_width:
@@ -111,10 +113,10 @@ class OnScreenDisplay(object):
     def _draw_osd(self, layout, rect):
         """ Draws the text specified in C{layout} into a box at C{rect}. """
 
-        osd_region = gtk.gdk.region_rectangle(rect)
+        osd_region = Gdk.Rectangle(rect)
         draw_region = osd_region.copy()
         if self._last_osd_rect:
-            draw_region.union(gtk.gdk.region_rectangle(self._last_osd_rect))
+            draw_region.union(Gdk.Rectangle(self._last_osd_rect))
 
         window = self._window._main_layout.get_bin_window()
         window.begin_paint_region(draw_region)

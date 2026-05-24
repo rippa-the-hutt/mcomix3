@@ -1,7 +1,9 @@
 """library_add_progress_dialog.py - Progress bar for the library."""
 
-import gtk
-import pango
+import gi
+gi.require_version("Gtk", "3.0")
+from gi.repository import Gtk, Gdk, GdkPixbuf
+from gi.repository import Pango
 
 from mcomix import labels
 
@@ -10,7 +12,7 @@ _dialog = None
 # but is represented by this ID in the library's TreeModels.
 _COLLECTION_ALL = -1
 
-class _AddLibraryProgressDialog(gtk.Dialog):
+class _AddLibraryProgressDialog(Gtk.Dialog):
 
     """Dialog with a ProgressBar that adds books to the library."""
 
@@ -19,7 +21,7 @@ class _AddLibraryProgressDialog(gtk.Dialog):
         <collection>, unless it is None.
         """
         super(_AddLibraryProgressDialog, self).__init__(_('Adding books'), library,
-            gtk.DIALOG_MODAL, (gtk.STOCK_STOP, gtk.RESPONSE_CLOSE))
+            Gtk.DialogFlags.MODAL, ("Stop", Gtk.ResponseType.CLOSE))
 
         self._window = window
         self._destroy = False
@@ -27,31 +29,31 @@ class _AddLibraryProgressDialog(gtk.Dialog):
         self.set_resizable(False)
         self.set_border_width(4)
         self.connect('response', self._response)
-        self.set_default_response(gtk.RESPONSE_CLOSE)
+        self.set_default_response(Gtk.ResponseType.CLOSE)
 
-        main_box = gtk.VBox(False, 5)
+        main_box = Gtk.VBox(False, 5)
         main_box.set_border_width(6)
         self.vbox.pack_start(main_box, False, False)
-        hbox = gtk.HBox(False, 10)
+        hbox = Gtk.HBox(False, 10)
         main_box.pack_start(hbox, False, False, 5)
-        left_box = gtk.VBox(True, 5)
-        right_box = gtk.VBox(True, 5)
+        left_box = Gtk.VBox(True, 5)
+        right_box = Gtk.VBox(True, 5)
         hbox.pack_start(left_box, False, False)
         hbox.pack_start(right_box, False, False)
 
         label = labels.BoldLabel(_('Added books:'))
         label.set_alignment(1.0, 1.0)
         left_box.pack_start(label, True, True)
-        number_label = gtk.Label('0')
+        number_label = Gtk.Label('0')
         number_label.set_alignment(0, 1.0)
         right_box.pack_start(number_label, True, True)
 
-        bar = gtk.ProgressBar()
+        bar = Gtk.ProgressBar()
         main_box.pack_start(bar, False, False)
 
         added_label = labels.ItalicLabel()
         added_label.set_alignment(0, 0.5)
-        added_label.set_ellipsize(pango.ELLIPSIZE_MIDDLE)
+        added_label.set_ellipsize(Pango.EllipsizeMode.MIDDLE)
         main_box.pack_start(added_label, False, False)
         self.show_all()
 
@@ -69,8 +71,8 @@ class _AddLibraryProgressDialog(gtk.Dialog):
             added_label.set_text(_("Adding '%s'...") % path)
             bar.set_fraction(total_added / total_paths_float)
 
-            while gtk.events_pending():
-                gtk.main_iteration_do(False)
+            while Gtk.events_pending():
+                Gtk.main_iteration_do(False)
 
             if self._destroy:
                 return

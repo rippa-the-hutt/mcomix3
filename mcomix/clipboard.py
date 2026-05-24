@@ -1,6 +1,8 @@
 """clipboard.py - Clipboard handler"""
 
-import gtk
+import gi
+gi.require_version("Gtk", "3.0")
+from gi.repository import Gtk, Gdk, GdkPixbuf
 import ctypes
 import io
 import sys
@@ -15,7 +17,7 @@ class Clipboard(gtk.Clipboard):
     """
 
     def __init__(self, window):
-        super(Clipboard, self).__init__(display=gtk.gdk.display_get_default(),
+        super(Clipboard, self).__init__(display=Gdk.Display.get_default(),
             selection="CLIPBOARD")
         self._window = window
 

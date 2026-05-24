@@ -2,9 +2,11 @@
 and displays info."""
 
 import os
-import gtk
-import gobject
-import pango
+import gi
+gi.require_version("Gtk", "3.0")
+from gi.repository import Gtk, Gdk, GdkPixbuf
+from gi.repository import GObject, GLib
+from gi.repository import Pango
 
 from mcomix import i18n
 from mcomix import labels
@@ -15,7 +17,7 @@ from mcomix.library.watchlist import WatchListDialog
 _COLLECTION_ALL = -1
 
 
-class _ControlArea(gtk.HBox):
+class _ControlArea(Gtk.HBox):
 
     """The _ControlArea is the bottom area of the library window where
     information is displayed and controls such as buttons reside.
@@ -27,15 +29,15 @@ class _ControlArea(gtk.HBox):
         self._library = library
         self.set_border_width(10)
 
-        borderbox = gtk.Frame()
-        borderbox.set_shadow_type(gtk.SHADOW_ETCHED_IN)
+        borderbox = Gtk.Frame()
+        borderbox.set_shadow_type(Gtk.ShadowType.ETCHED_IN)
         borderbox.set_size_request(350, -1)
 
-        insidebox = gtk.EventBox()
+        insidebox = Gtk.EventBox()
         insidebox.set_border_width(1)
-        insidebox.set_state(gtk.STATE_ACTIVE)
+        insidebox.set_state_flags(Gtk.StateFlags.ACTIVE, True)
 
-        infobox = gtk.VBox(False, 5)
+        infobox = Gtk.VBox(False, 5)
         infobox.set_border_width(10)
         self.pack_start(borderbox)
         borderbox.add(insidebox)
@@ -44,32 +46,32 @@ class _ControlArea(gtk.HBox):
         self._namelabel = labels.BoldLabel()
         self._namelabel.set_alignment(0, 0.5)
         self._namelabel.set_selectable(True)
-        self._namelabel.set_ellipsize(pango.ELLIPSIZE_MIDDLE)
+        self._namelabel.set_ellipsize(Pango.EllipsizeMode.MIDDLE)
         infobox.pack_start(self._namelabel, False, False)
 
-        self._filelabel = gtk.Label()
-        self._filelabel.set_ellipsize(pango.ELLIPSIZE_MIDDLE)
+        self._filelabel = Gtk.Label()
+        self._filelabel.set_ellipsize(Pango.EllipsizeMode.MIDDLE)
         self._filelabel.set_alignment(0, 0.5)
         infobox.pack_start(self._filelabel, False, False)
 
-        self._dirlabel = gtk.Label()
-        self._dirlabel.set_ellipsize(pango.ELLIPSIZE_MIDDLE)
+        self._dirlabel = Gtk.Label()
+        self._dirlabel.set_ellipsize(Pango.EllipsizeMode.MIDDLE)
         self._dirlabel.set_alignment(0, 0.5)
         self._dirlabel.set_selectable(True)
         infobox.pack_start(self._dirlabel, False, False)
 
-        vbox = gtk.VBox(False, 10)
+        vbox = Gtk.VBox(False, 10)
         vbox.set_size_request(350, -1)
         self.pack_start(vbox, False)
 
         # First line of controls, containing the search box
-        hbox = gtk.HBox(False)
+        hbox = Gtk.HBox(False)
         vbox.pack_start(hbox)
 
-        label = gtk.Label(_('_Search:'))
+        label = Gtk.Label(_('_Search:'))
         label.set_use_underline(True)
         hbox.pack_start(label, False, False)
-        search_entry = gtk.Entry()
+        search_entry = Gtk.Entry()
         search_entry.connect('activate', self._filter_books)
         search_entry.set_tooltip_text(
             _('Display only those books that have the specified text string '
@@ -78,19 +80,19 @@ class _ControlArea(gtk.HBox):
         label.set_mnemonic_widget(search_entry)
 
         # Last line of controls, containing buttons like 'Open'
-        hbox = gtk.HBox(False, 10)
+        hbox = Gtk.HBox(False, 10)
         vbox.pack_end(hbox)
 
-        watchlist_button = gtk.Button(_("_Watch list"))
+        watchlist_button = Gtk.Button(_("_Watch list"))
         watchlist_button.set_image(
-            gtk.image_new_from_stock(gtk.STOCK_FIND, gtk.ICON_SIZE_BUTTON))
+            Gtk.Image.new_from_icon_name("Find", Gtk.IconSize.BUTTON))
         watchlist_button.connect('clicked',
             lambda *args: WatchListDialog(self._library))
         watchlist_button.set_tooltip_text(
             _('Open the watchlist management dialog.'))
         hbox.pack_start(watchlist_button)
 
-        self._open_button = gtk.Button(None, gtk.STOCK_OPEN)
+        self._open_button = Gtk.Button(label="Open")
         self._open_button.connect('clicked',
             self._library.book_area.open_selected_book)
         self._open_button.set_tooltip_text(_('Open the selected book.'))
@@ -155,13 +157,13 @@ class _ControlArea(gtk.HBox):
 
     def _filter_books(self, entry, *args):
         """Display only the books in the current collection whose paths
-        contain the string in the gtk.Entry. The string is not
+        contain the string in the Gtk.Entry. The string is not
         case-sensitive.
         """
         self._library.filter_string = entry.get_text().decode('utf-8')
         if not self._library.filter_string:
             self._library.filter_string = None
         collection = self._library.collection_area.get_current_collection()
-        gobject.idle_add(self._library.book_area.display_covers, collection)
+        GLib.idle_add(self._library.book_area.display_covers, collection)
 
 # vim: expandtab:sw=4:ts=4

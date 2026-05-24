@@ -3,8 +3,10 @@
 import os
 import mimetypes
 import fnmatch
-import gtk
-import pango
+import gi
+gi.require_version("Gtk", "3.0")
+from gi.repository import Gtk, Gdk, GdkPixbuf
+from gi.repository import Pango
 
 from mcomix.preferences import prefs
 from mcomix import image_tools
@@ -19,12 +21,12 @@ from mcomix import tools
 
 mimetypes.init()
 
-class _BaseFileChooserDialog(gtk.Dialog):
+class _BaseFileChooserDialog(Gtk.Dialog):
 
     """We roll our own FileChooserDialog because the one in GTK seems
     buggy with the preview widget. The <action> argument dictates what type
-    of filechooser dialog we want (i.e. it is gtk.FILE_CHOOSER_ACTION_OPEN
-    or gtk.FILE_CHOOSER_ACTION_SAVE).
+    of filechooser dialog we want (i.e. it is Gtk.FileChooserAction.OPEN
+    or Gtk.FileChooserAction.SAVE).
 
     This is a base class for the _MainFileChooserDialog, the
     _LibraryFileChooserDialog and the SimpleFileChooserDialog.
@@ -36,48 +38,48 @@ class _BaseFileChooserDialog(gtk.Dialog):
 
     _last_activated_file = None
 
-    def __init__(self, action=gtk.FILE_CHOOSER_ACTION_OPEN):
+    def __init__(self, action=Gtk.FileChooserAction.OPEN):
         self._action = action
         self._destroyed = False
 
-        if action == gtk.FILE_CHOOSER_ACTION_OPEN:
+        if action == Gtk.FileChooserAction.OPEN:
             title = _('Open')
-            buttons = (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
-                gtk.STOCK_OPEN, gtk.RESPONSE_OK)
+            buttons = ("Cancel", Gtk.ResponseType.CANCEL,
+                "Open", Gtk.ResponseType.OK)
 
         else:
             title = _('Save')
-            buttons = (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
-                gtk.STOCK_SAVE, gtk.RESPONSE_OK)
+            buttons = ("Cancel", Gtk.ResponseType.CANCEL,
+                "Save", Gtk.ResponseType.OK)
 
         super(_BaseFileChooserDialog, self).__init__(title, None, 0, buttons)
-        self.set_default_response(gtk.RESPONSE_OK)
+        self.set_default_response(Gtk.ResponseType.OK)
 
-        self.filechooser = gtk.FileChooserWidget(action=action)
+        self.filechooser = Gtk.FileChooserWidget(action=action)
         self.filechooser.set_size_request(680, 420)
         self.vbox.pack_start(self.filechooser)
         self.set_border_width(4)
         self.filechooser.set_border_width(6)
         self.connect('response', self._response)
         self.filechooser.connect('file_activated', self._response,
-            gtk.RESPONSE_OK)
+            Gtk.ResponseType.OK)
 
-        preview_box = gtk.VBox(False, 10)
+        preview_box = Gtk.VBox(False, 10)
         preview_box.set_size_request(130, 0)
-        self._preview_image = gtk.Image()
+        self._preview_image = Gtk.Image()
         self._preview_image.set_size_request(130, 130)
         preview_box.pack_start(self._preview_image, False, False)
         self.filechooser.set_preview_widget(preview_box)
 
         pango_scale_small = (1 / 1.2)
 
-        self._namelabel = labels.FormattedLabel(weight=pango.WEIGHT_BOLD,
+        self._namelabel = labels.FormattedLabel(weight=Pango.Weight.BOLD,
             scale=pango_scale_small)
-        self._namelabel.set_ellipsize(pango.ELLIPSIZE_MIDDLE)
+        self._namelabel.set_ellipsize(Pango.EllipsizeMode.MIDDLE)
         preview_box.pack_start(self._namelabel, False, False)
 
         self._sizelabel = labels.FormattedLabel(scale=pango_scale_small)
-        self._sizelabel.set_ellipsize(pango.ELLIPSIZE_MIDDLE)
+        self._sizelabel.set_ellipsize(Pango.EllipsizeMode.MIDDLE)
         preview_box.pack_start(self._sizelabel, False, False)
         self.filechooser.set_use_preview_label(False)
         preview_box.show_all()
@@ -113,9 +115,9 @@ class _BaseFileChooserDialog(gtk.Dialog):
         """Add a filter, called <name>, for each mime type in <mimes> and
         each pattern in <patterns> to the filechooser.
         """
-        ffilter = gtk.FileFilter()
+        ffilter = Gtk.FileFilter()
         ffilter.add_custom(
-                gtk.FILE_FILTER_FILENAME|gtk.FILE_FILTER_MIME_TYPE,
+                Gtk.FileFilterFlags.FILENAME|Gtk.FileFilterFlags.MIME_TYPE,
                 self._filter, (patterns, mimes))
 
         ffilter.set_name(name)
@@ -125,7 +127,7 @@ class _BaseFileChooserDialog(gtk.Dialog):
     def add_archive_filters(self):
         """Add archive filters to the filechooser.
         """
-        ffilter = gtk.FileFilter()
+        ffilter = Gtk.FileFilter()
         ffilter.set_name(_('All archives'))
         self.filechooser.add_filter(ffilter)
         supported_formats = archive_tools.get_supported_formats()
@@ -141,7 +143,7 @@ class _BaseFileChooserDialog(gtk.Dialog):
     def add_image_filters(self):
         """Add images filters to the filechooser.
         """
-        ffilter = gtk.FileFilter()
+        ffilter = Gtk.FileFilter()
         ffilter.set_name(_('All images'))
         self.filechooser.add_filter(ffilter)
         supported_formats = image_tools.get_supported_formats()
@@ -174,7 +176,7 @@ class _BaseFileChooserDialog(gtk.Dialog):
 
     def collect_files_from_subdir(self, path, filter, recursive=False):
         """ Finds archives within C{path} that match the
-        L{gtk.FileFilter} passed in C{filter}. """
+        L{Gtk.FileFilter} passed in C{filter}. """
 
         for root, dirs, files in os.walk(path):
             for file in files:
@@ -203,7 +205,7 @@ class _BaseFileChooserDialog(gtk.Dialog):
         """Return a list of the paths of the chosen files, or None if the
         event only changed the current directory.
         """
-        if response == gtk.RESPONSE_OK:
+        if response == Gtk.ResponseType.OK:
             if not self.filechooser.get_filenames():
                 return
 
@@ -224,19 +226,19 @@ class _BaseFileChooserDialog(gtk.Dialog):
             # FileChooser.set_do_overwrite_confirmation() doesn't seem to
             # work on our custom dialog, so we use a simple alternative.
             first_path = self.filechooser.get_filenames()[0].decode('utf-8')
-            if (self._action == gtk.FILE_CHOOSER_ACTION_SAVE and
+            if (self._action == Gtk.FileChooserAction.SAVE and
                 not os.path.isdir(first_path) and
                 os.path.exists(first_path)):
 
                 overwrite_dialog = message_dialog.MessageDialog(None, 0,
-                    gtk.MESSAGE_QUESTION, gtk.BUTTONS_OK_CANCEL)
+                    Gtk.MessageType.QUESTION, Gtk.ButtonsType.OK_CANCEL)
                 overwrite_dialog.set_text(
                     _("A file named '%s' already exists. Do you want to replace it?") %
                         os.path.basename(first_path),
                     _('Replacing it will overwrite its contents.'))
                 response = overwrite_dialog.run()
 
-                if response != gtk.RESPONSE_OK:
+                if response != Gtk.ResponseType.OK:
                     self.emit_stop_by_name('response')
                     return
 

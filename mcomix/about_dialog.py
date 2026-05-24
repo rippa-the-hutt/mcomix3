@@ -2,14 +2,16 @@
 """about_dialog.py - About dialog."""
 
 import webbrowser
-import gtk
+import gi
+gi.require_version("Gtk", "3.0")
+from gi.repository import Gtk, Gdk, GdkPixbuf
 import pkg_resources
 
 from mcomix import constants
 from mcomix import strings
 from mcomix import image_tools
 
-class _AboutDialog(gtk.AboutDialog):
+class _AboutDialog(Gtk.AboutDialog):
 
     def __init__(self, window):
         super(_AboutDialog, self).__init__()
@@ -52,6 +54,6 @@ class _AboutDialog(gtk.AboutDialog):
 def open_url(dialog, url, *args):
     webbrowser.open(url)
 
-gtk.about_dialog_set_url_hook(open_url, None)
+Gtk.AboutDialog.set_url_hook(open_url, None)
 
 # vim: expandtab:sw=4:ts=4
