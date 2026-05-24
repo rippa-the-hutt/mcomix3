@@ -522,8 +522,7 @@ class EventHandler(object):
               not event.state & Gdk.ModifierType.MOD1_MASK and
               not event.state & Gdk.ModifierType.SHIFT_MASK):
             self._window.cursor_handler.set_cursor_type(constants.NORMAL_CURSOR)
-            self._window.popup.popup(None, None, None, event.button,
-                event.time)
+            self._window.popup.popup_at_pointer(event)
 
         elif event.button == 4:
             self._window.show_info_panel()

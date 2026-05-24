@@ -12,9 +12,10 @@ dialog_windows[ 'about-dialog' ] = [None, about_dialog._AboutDialog]
 dialog_windows[ 'comments-dialog' ] = [None, comment_dialog._CommentsDialog]
 dialog_windows[ 'properties-dialog' ] = [None, properties_dialog._PropertiesDialog]
 
-def open_dialog(action, window, name_of_dialog):
+def open_dialog(action, user_data):
     """Create and display the given dialog."""
 
+    window, name_of_dialog = user_data
     _dialog = dialog_windows[ name_of_dialog ]
 
     # if the dialog window is not created then create the window

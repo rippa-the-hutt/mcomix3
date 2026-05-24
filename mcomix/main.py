@@ -120,10 +120,10 @@ class MainWindow(Gtk.Window):
             self._main_layout.put(img, 0, 0)
         self.set_bg_colour(prefs['bg colo'])
 
-        self._vadjust.step_increment = 15
-        self._vadjust.page_increment = 1
-        self._hadjust.step_increment = 15
-        self._hadjust.page_increment = 1
+        self._vadjust.set_step_increment( 15)
+        self._vadjust.set_page_increment( 1)
+        self._hadjust.set_step_increment( 15)
+        self._hadjust.set_page_increment( 1)
 
         table = Gtk.Table(2, 2, False)
         table.attach(self.thumbnailsidebar, 0, 1, 2, 5, Gtk.AttachOptions.FILL,
@@ -863,8 +863,8 @@ class MainWindow(Gtk.Window):
 
         visible_width, visible_height = self.get_visible_area_size()
 
-        hadjust_upper = max(0, self._hadjust.upper - visible_width)
-        vadjust_upper = max(0, self._vadjust.upper - visible_height)
+        hadjust_upper = max(0, self._hadjust.get_upper() - visible_width)
+        vadjust_upper = max(0, self._vadjust.get_upper() - visible_height)
         hadjust_lower = 0
 
         if bound is not None and self.is_manga_mode:
@@ -902,7 +902,7 @@ class MainWindow(Gtk.Window):
 
     def update_layout_position(self):
         self.layout.set_viewport_position(
-            (int(round(self._hadjust.value)), int(round(self._vadjust.value))))
+            (int(round(self._hadjust.get_value())), int(round(self._vadjust.get_value()))))
 
     def clear(self):
         """Clear the currently displayed data (i.e. "close" the file)."""

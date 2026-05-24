@@ -74,12 +74,12 @@ class Pageselector(Gtk.Dialog):
         # Currently displayed thumbnail page.
         self._thumbnail_page = 0
         self._thread = WorkerThread(self._generate_thumbnail, name='preview')
-        self._update_thumbnail(int(self._selector_adjustment.value))
+        self._update_thumbnail(int(self._selector_adjustment.get_value()))
         self._window.imagehandler.page_available += self._page_available
 
     def _cb_value_changed(self, *args):
         """ Called whenever the spinbox value changes. Updates the preview thumbnail. """
-        page = int(self._selector_adjustment.value)
+        page = int(self._selector_adjustment.get_value())
         if page != self._thumbnail_page:
             self._update_thumbnail(page)
 
@@ -90,7 +90,7 @@ class Pageselector(Gtk.Dialog):
         prefs['pageselector width'] = self.get_allocation().width
         prefs['pageselector height'] = self.get_allocation().height
 
-        self._update_thumbnail(int(self._selector_adjustment.value))
+        self._update_thumbnail(int(self._selector_adjustment.get_value()))
 
     def _page_text_changed(self, control, *args):
         """ Called when the page selector has been changed. Used to instantly update
@@ -102,7 +102,7 @@ class Pageselector(Gtk.Dialog):
 
     def _response(self, widget, event, *args):
         if event == Gtk.ResponseType.OK:
-            self._window.set_page(int(self._selector_adjustment.value))
+            self._window.set_page(int(self._selector_adjustment.get_value()))
 
         self._window.imagehandler.page_available -= self._page_available
         self._thread.stop()
@@ -132,7 +132,7 @@ class Pageselector(Gtk.Dialog):
             self._image_preview.set_from_pixbuf(pixbuf)
 
     def _page_available(self, page):
-        if page == int(self._selector_adjustment.value):
+        if page == int(self._selector_adjustment.get_value()):
             self._update_thumbnail(page)
 
 # vim: expandtab:sw=4:ts=4
