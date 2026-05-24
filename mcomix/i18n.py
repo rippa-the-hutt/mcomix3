@@ -4,7 +4,7 @@ import sys
 import os
 import locale
 import gettext
-import pkg_resources
+from importlib.resources import files
 
 try:
     import chardet
@@ -87,9 +87,9 @@ def install_gettext():
     # Search for .mo files manually, since gettext doesn't support setuptools/pkg_resources.
     for lang in lang_identifiers:
         resource = os.path.join(lang, 'LC_MESSAGES', '%s.mo' % domain)
-        if pkg_resources.resource_exists('mcomix.messages', resource):
-            translation = gettext.GNUTranslations(
-                    pkg_resources.resource_stream('mcomix.messages', resource))
+        if (files('mcomix.messages') / resource).exists():
+            with (files('mcomix.messages') / resource).open('rb') as mo_file:
+                translation = gettext.GNUTranslations(mo_file)
             break
 
     translation.install()

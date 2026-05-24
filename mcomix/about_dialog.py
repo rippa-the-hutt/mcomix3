@@ -5,7 +5,7 @@ import webbrowser
 import gi
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, Gdk, GdkPixbuf
-import pkg_resources
+from importlib.resources import files
 
 from mcomix import constants
 from mcomix import strings
@@ -22,7 +22,7 @@ class _AboutDialog(Gtk.AboutDialog):
         self.set_website('https://sourceforge.net/p/mcomix/wiki/')
         self.set_copyright('Copyright Â© 2005-2016')
 
-        icon_data = pkg_resources.resource_string('mcomix.images', 'mcomix.png')
+        icon_data = (files('mcomix.images') / 'mcomix.png').read_bytes()
         pixbuf = image_tools.load_pixbuf_data(icon_data)
         self.set_logo(pixbuf)
 

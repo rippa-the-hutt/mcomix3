@@ -3,7 +3,7 @@
 import gi
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, Gdk, GdkPixbuf
-from pkg_resources import resource_string
+from importlib.resources import files
 
 from mcomix import image_tools
 from mcomix import log
@@ -15,7 +15,7 @@ def mcomix_icons():
     sizes = ('16x16', '32x32', '48x48')
     pixbufs = [
         image_tools.load_pixbuf_data(
-            resource_string('mcomix.images', size + '/mcomix.png')
+            (files('mcomix.images') / (size + '/mcomix.png')).read_bytes()
         ) for size in sizes
     ]
 
@@ -54,7 +54,7 @@ def load_icons():
     factory = Gtk.IconFactory()
     for filename, stockid in _icons:
         try:
-            icon_data = resource_string('mcomix.images', filename)
+            icon_data = (files('mcomix.images') / filename).read_bytes()
             pixbuf = image_tools.load_pixbuf_data(icon_data)
             iconset = Gtk.IconSet(pixbuf)
             factory.add(stockid, iconset)

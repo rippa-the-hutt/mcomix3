@@ -114,17 +114,6 @@ def parse_arguments(argv):
 def run():
     """Run the program."""
 
-    try:
-        import pkg_resources
-
-    except ImportError:
-        # gettext isn't initialized yet, since pkg_resources is required to find translation files.
-        # Thus, localizing these messages is pointless.
-        log._print("The package 'pkg_resources' could not be found.")
-        log._print("You need to install the 'setuptools' package, which also includes pkg_resources.")
-        log._print("Note: On most distributions, 'distribute' supersedes 'setuptools'.")
-        wait_and_exit()
-
     # Load configuration and setup localisation.
     preferences.read_preferences_file()
     from mcomix import i18n
