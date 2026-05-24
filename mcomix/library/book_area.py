@@ -1,7 +1,7 @@
 """library_book_area.py - The window of the library that displays the covers of books."""
 
 import os
-import urllib
+import urllib.request
 import gi
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, Gdk, GdkPixbuf
@@ -75,12 +75,12 @@ class _BookArea(Gtk.ScrolledWindow):
         self._iconview.connect('button_press_event', self._button_press)
         self._iconview.connect('key_press_event', self._key_press)
         self._iconview.connect('popup_men', self._popup_menu)
-        self._iconview.modify_base(Gtk.StateFlags.NORMAL, Gdk.RGBA())  # Black.
+        self._iconview.modify_base(Gtk.StateFlags.NORMAL, Gdk.Color(red=0, green=0, blue=0))  # Black.
         self._iconview.enable_model_drag_source(0,
-            [('book', gtk.TARGET_SAME_APP, constants.LIBRARY_DRAG_EXTERNAL_ID)],
+            [Gtk.TargetEntry.new('book', Gdk.TargetFlags.SAME_APP, constants.LIBRARY_DRAG_EXTERNAL_ID)],
             Gdk.DragAction.MOVE)
         self._iconview.drag_dest_set(Gtk.DestDefaults.ALL,
-            [('text/uri-list', 0, constants.LIBRARY_DRAG_EXTERNAL_ID)],
+            [Gtk.TargetEntry.new('text/uri-list', 0, constants.LIBRARY_DRAG_EXTERNAL_ID)],
             Gdk.DragAction.COPY | Gdk.DragAction.MOVE)
         self._iconview.set_selection_mode(Gtk.SelectionMode.MULTIPLE)
         self.add(self._iconview)
@@ -706,7 +706,7 @@ class _BookArea(Gtk.ScrolledWindow):
             return
 
         uris = [ portability.normalize_uri(uri) for uri in uris ]
-        paths = [ urllib.url2pathname(uri).decode('utf-8') for uri in uris ]
+        paths = [ urllib.request.url2pathname(uri).decode('utf-8') for uri in uris ]
 
         collection = self._library.collection_area.get_current_collection()
         collection_name = self._library.backend.get_collection_name(collection)

@@ -1,11 +1,11 @@
 """recent.py - Recent files handler."""
 
-import urllib
+import urllib.request
 import itertools
 import gi
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, Gdk, GdkPixbuf
-import glib
+from gi.repository import GLib
 from gi.repository import GObject, GLib
 import sys
 
@@ -21,16 +21,16 @@ class RecentFilesMenu(Gtk.RecentChooserMenu):
     def __init__(self, ui, window):
         self._window = window
         self._manager = Gtk.RecentManager.get_default()
-        super(RecentFilesMenu, self).__init__(self._manager)
+        super(RecentFilesMenu, self).__init__(recent_manager=self._manager)
 
-        self.set_sort_type(gtk.RECENT_SORT_MRU)
+        self.set_sort_type(Gtk.RecentSortType.MRU)
         self.set_show_tips(True)
         # Missing icons crash GTK on Win32
         if sys.platform == 'win32':
             self.set_show_icons(False)
             self.set_show_numbers(True)
 
-        rfilter = gtk.RecentFilter()
+        rfilter = Gtk.RecentFilter()
         supported_formats = {}
         supported_formats.update(image_tools.get_supported_formats())
         supported_formats.update(archive_tools.get_supported_formats())
@@ -47,7 +47,7 @@ class RecentFilesMenu(Gtk.RecentChooserMenu):
 
     def _load(self, *args):
         uri = self.get_current_uri()
-        path = urllib.url2pathname(uri[7:])
+        path = urllib.request.url2pathname(uri[7:])
         did_file_load = self._window.filehandler.open_file(path.decode('utf-8'))
 
         if not did_file_load:
@@ -60,13 +60,13 @@ class RecentFilesMenu(Gtk.RecentChooserMenu):
     def add(self, path):
         if not preferences.prefs['store recent file info']:
             return
-        uri = portability.uri_prefix() + urllib.pathname2url(i18n.to_utf8(path))
+        uri = portability.uri_prefix() + urllib.request.pathname2url(i18n.to_utf8(path))
         self._manager.add_item(uri)
 
     def remove(self, path):
         if not preferences.prefs['store recent file info']:
             return
-        uri = portability.uri_prefix() + urllib.pathname2url(i18n.to_utf8(path))
+        uri = portability.uri_prefix() + urllib.request.pathname2url(i18n.to_utf8(path))
         try:
             self._manager.remove_item(uri)
         except glib.GError:

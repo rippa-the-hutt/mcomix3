@@ -404,33 +404,47 @@ class MainUI(Gtk.UIManager):
         self.insert_action_group(self._actiongroup, 0)
 
         self.bookmarks = bookmark_menu.BookmarksMenu(self, window)
-        self.get_widget('/Menu/menu_bookmarks').set_submenu(self.bookmarks)
-        self.get_widget('/Menu/menu_bookmarks').show()
+        widget = self.get_widget('/Menu/menu_bookmarks')
+        if widget:
+            widget.set_submenu(self.bookmarks)
+            widget.show()
 
         self.bookmarks_popup = bookmark_menu.BookmarksMenu(self, window)
-        self.get_widget('/Popup/menu_bookmarks_popup').set_submenu(self.bookmarks_popup)
-        self.get_widget('/Popup/menu_bookmarks_popup').show()
+        widget = self.get_widget('/Popup/menu_bookmarks_popup')
+        if widget:
+            widget.set_submenu(self.bookmarks_popup)
+            widget.show()
 
         self.recent = recent.RecentFilesMenu(self, window)
-        self.get_widget('/Menu/menu_file/menu_recent').set_submenu(self.recent)
-        self.get_widget('/Menu/menu_file/menu_recent').show()
+        widget = self.get_widget('/Menu/menu_file/menu_recent')
+        if widget:
+            widget.set_submenu(self.recent)
+            widget.show()
 
         self.recentPopup = recent.RecentFilesMenu(self, window)
-        self.get_widget('/Popup/menu_recent').set_submenu(self.recentPopup)
-        self.get_widget('/Popup/menu_recent').show()
+        widget = self.get_widget('/Popup/menu_recent')
+        if widget:
+            widget.set_submenu(self.recentPopup)
+            widget.show()
 
         openwith = openwith_menu.OpenWithMenu(self, window)
-        self.get_widget('/Menu/menu_file/menu_open_with').set_submenu(openwith)
-        self.get_widget('/Menu/menu_file/menu_open_with').show()
+        widget = self.get_widget('/Menu/menu_file/menu_open_with')
+        if widget:
+            widget.set_submenu(openwith)
+            widget.show()
         openwith = openwith_menu.OpenWithMenu(self, window)
-        self.get_widget('/Popup/menu_open_with_popup').set_submenu(openwith)
-        self.get_widget('/Popup/menu_open_with_popup').show()
+        widget = self.get_widget('/Popup/menu_open_with_popup')
+        if widget:
+            widget.set_submenu(openwith)
+            widget.show()
 
         window.add_accel_group(self.get_accel_group())
 
         # Is there no built-in way to do this?
-        self.get_widget('/Tool/expander').set_expand(True)
-        self.get_widget('/Tool/expander').set_sensitive(False)
+        widget = self.get_widget('/Tool/expander')
+        if widget:
+            widget.set_expand(True)
+            widget.set_sensitive(False)
 
     def set_sensitivities(self):
         """Sets the main UI's widget's sensitivities appropriately."""

@@ -49,11 +49,11 @@ class _AboutDialog(Gtk.AboutDialog):
         artists = [ '%s: %s' % (name, description) for name, description in strings.ARTISTS ]
         self.set_artists(artists)
 
+        self.connect('activate-link', self._on_activate_link)
         self.show_all()
 
-def open_url(dialog, url, *args):
-    webbrowser.open(url)
-
-Gtk.AboutDialog.set_url_hook(open_url, None)
+    def _on_activate_link(self, dialog, url):
+        webbrowser.open(url)
+        return True
 
 # vim: expandtab:sw=4:ts=4

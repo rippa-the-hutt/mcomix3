@@ -109,7 +109,7 @@ def get_supported_formats():
 SUPPORTED_ARCHIVE_REGEX = re.compile(r'\.(%s)$' %
                                      '|'.join(sorted(reduce(
                                          operator.add,
-                                         [map(re.escape, fmt[1]) for fmt
+                                         [list(map(re.escape, fmt[1])) for fmt
                                           in get_supported_formats().values()]
                                      ))), re.I)
 

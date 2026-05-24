@@ -1,6 +1,6 @@
 """thumbbar.py - Thumbnail sidebar for main window."""
 
-import urllib
+import urllib.request
 import gi
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, Gdk, GdkPixbuf
@@ -57,7 +57,7 @@ class ThumbnailSidebar(Gtk.ScrolledWindow):
         # enable drag and dropping of images from thumbnail bar to some file
         # manager
         self._treeview.enable_model_drag_source(Gdk.ModifierType.BUTTON1_MASK,
-            [('text/uri-list', 0, 0)], Gdk.DragAction.COPY)
+            [Gtk.TargetEntry.new('text/uri-list', 0, 0)], Gdk.DragAction.COPY)
 
         # Page column
         self._thumbnail_page_treeviewcolumn = Gtk.TreeViewColumn(None)
@@ -141,11 +141,11 @@ class ThumbnailSidebar(Gtk.ScrolledWindow):
     def set_thumbnail_background(self, colour):
 
         color = Gdk.RGBA(colour[0]/65535.0, colour[1]/65535.0, colour[2]/65535.0)
-        self._pixbuf_cellrenderer.set_property('cell-background-gdk',
+        self._pixbuf_cellrenderer.set_property('cell-background-rgba',
                 color)
-        self._text_cellrenderer.set_property('background-gdk',
+        self._text_cellrenderer.set_property('background-rgba',
                 color)
-        self._text_cellrenderer.set_property('foreground-gdk',
+        self._text_cellrenderer.set_property('foreground-rgba',
                 image_tools.text_color_for_background_color(colour))
 
     @property
@@ -234,7 +234,7 @@ class ThumbnailSidebar(Gtk.ScrolledWindow):
 
         selected = self._get_selected_row()
         path = self._window.imagehandler.get_path_to_page(selected + 1)
-        uri = 'file://localhost' + urllib.pathname2url(path)
+        uri = 'file://localhost' + urllib.request.pathname2url(path)
         selection.set_uris([uri])
 
     def _drag_begin(self, treeview, context):

@@ -1,6 +1,6 @@
 """ Gtk.IconView subclass for dynamically generated thumbnails. """
 
-import Queue
+import queue
 import gi
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, Gdk, GdkPixbuf
@@ -114,7 +114,7 @@ class ThumbnailIconView(Gtk.IconView, ThumbnailViewBase):
         self.set_pixbuf_column(pixbuf_column)
 
         # Connect events
-        self.connect('expose-event', self.draw_thumbnails_on_screen)
+        self.connect("draw", self.draw_thumbnails_on_screen)
 
     def get_visible_range(self):
         return Gtk.IconView.get_visible_range(self)
@@ -126,7 +126,7 @@ class ThumbnailTreeView(Gtk.TreeView, ThumbnailViewBase):
         ThumbnailViewBase.__init__(self, uid_column, pixbuf_column, status_column)
 
         # Connect events
-        self.connect('expose-event', self.draw_thumbnails_on_screen)
+        self.connect("draw", self.draw_thumbnails_on_screen)
 
     def get_visible_range(self):
         return Gtk.TreeView.get_visible_range(self)

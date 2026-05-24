@@ -231,7 +231,7 @@ class MainWindow(Gtk.Window):
                                      Gdk.EventMask.POINTER_MOTION_MASK)
 
         self._main_layout.drag_dest_set(Gtk.DestDefaults.ALL,
-                                        [('text/uri-list', 0, 0)],
+                                        [Gtk.TargetEntry.new('text/uri-list', 0, 0)],
                                         Gdk.DragAction.COPY |
                                         Gdk.DragAction.MOVE)
 
@@ -752,7 +752,7 @@ class MainWindow(Gtk.Window):
 
     @property
     def is_fullscreen(self):
-        window_state = self.window.get_state()
+        window_state = self.get_window().get_state()
         return 0 != (window_state & Gdk.WindowState.FULLSCREEN)
 
     def change_fullscreen(self, toggleaction):
@@ -950,7 +950,8 @@ class MainWindow(Gtk.Window):
         probably use the cursor_handler instead of using this method
         directly.
         """
-        self._main_layout.window.set_cursor(mode)
+        if self._main_layout.get_window():
+            self._main_layout.get_window().set_cursor(mode)
 
     def update_title(self):
         """Set the title acording to current state."""
@@ -975,7 +976,7 @@ class MainWindow(Gtk.Window):
         format (r, g, b). Values are 16-bit.
         """
         self._main_layout.modify_bg(Gtk.StateFlags.NORMAL,
-                                    Gdk.RGBA(colour[0]/65535.0, colour[1]/65535.0, colour[2]/65535.0))
+                                    Gdk.Color(red=colour[0], green=colour[1], blue=colour[2]))
 
         if prefs['thumbnail bg uses main colo']:
             self.thumbnailsidebar.change_thumbnail_background_color(prefs['bg colo'])

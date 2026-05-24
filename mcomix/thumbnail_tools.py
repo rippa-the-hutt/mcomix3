@@ -11,7 +11,7 @@ import threading
 import itertools
 import traceback
 import PIL.Image as Image
-from urllib import pathname2url
+from urllib.request import pathname2url
 
 try:  # The md5 module is deprecated as of Python 2.5, replaced by hashlib.
     from hashlib import md5

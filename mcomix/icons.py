@@ -47,7 +47,7 @@ def load_icons():
 
     # Load window title icons.
     pixbufs = mcomix_icons()
-    Gtk.Window.set_default_icon_list(*pixbufs)
+    Gtk.Window.set_default_icon_list(pixbufs)
     # Load application icons.
     factory = Gtk.IconFactory()
     for filename, stockid in _icons:

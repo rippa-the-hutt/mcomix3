@@ -44,7 +44,7 @@ class _CollectionArea(Gtk.ScrolledWindow):
         self._treeview.set_rules_hint(True)
         self._set_acceptable_drop(True)
         self._treeview.enable_model_drag_source(Gdk.ModifierType.BUTTON1_MASK,
-            [('collection', gtk.TARGET_SAME_WIDGET, constants.LIBRARY_DRAG_COLLECTION_ID)],
+            [Gtk.TargetEntry.newGtk.TargetEntry.new('collection', Gdk.TargetFlags.SAME_WIDGET, constants.LIBRARY_DRAG_COLLECTION_ID)],
             Gdk.DragAction.MOVE)
 
         cellrenderer = Gtk.CellRendererText()
@@ -350,13 +350,13 @@ class _CollectionArea(Gtk.ScrolledWindow):
         drop_row = treeview.get_dest_row_at_pos(x, y)
         if drop_row is None: # Drop "after" the last row.
             dest_path, pos = ((len(self._treestore) - 1,),
-                gtk.TREE_VIEW_DROP_AFTER)
+                Gtk.TreeViewDropPosition.AFTER)
         else:
             dest_path, pos = drop_row
         src_collection = self.get_current_collection()
         dest_collection = self._get_collection_at_path(dest_path)
         if drag_id == constants.LIBRARY_DRAG_COLLECTION_ID:
-            if pos in (gtk.TREE_VIEW_DROP_BEFORE, gtk.TREE_VIEW_DROP_AFTER):
+            if pos in (Gtk.TreeViewDropPosition.BEFORE, Gtk.TreeViewDropPosition.AFTER):
                 dest_collection = self._library.backend.get_supercollection(
                     dest_collection)
             self._library.backend.add_collection_to_collection(
@@ -387,7 +387,7 @@ class _CollectionArea(Gtk.ScrolledWindow):
         if context.get_source_widget() is self._treeview: # Moving collection.
             model, src_iter = treeview.get_selection().get_selected()
             if drop_row is None: # Drop "after" the last row.
-                dest_path, pos = (len(model) - 1,), gtk.TREE_VIEW_DROP_AFTER
+                dest_path, pos = (len(model) - 1,), Gtk.TreeViewDropPosition.AFTER
             else:
                 dest_path, pos = drop_row
             dest_iter = model.get_iter(dest_path)
@@ -396,7 +396,7 @@ class _CollectionArea(Gtk.ScrolledWindow):
                 self._library.set_status_message('')
                 return
             dest_collection = self._get_collection_at_path(dest_path)
-            if pos in (gtk.TREE_VIEW_DROP_BEFORE, gtk.TREE_VIEW_DROP_AFTER):
+            if pos in (Gtk.TreeViewDropPosition.BEFORE, Gtk.TreeViewDropPosition.AFTER):
                 dest_collection = self._library.backend.get_supercollection(
                     dest_collection)
             if (_COLLECTION_ALL in (src_collection, dest_collection) or
@@ -420,7 +420,7 @@ class _CollectionArea(Gtk.ScrolledWindow):
                 self._library.set_status_message('')
                 return
             dest_path, pos = drop_row
-            if pos in (gtk.TREE_VIEW_DROP_BEFORE, gtk.TREE_VIEW_DROP_AFTER):
+            if pos in (Gtk.TreeViewDropPosition.BEFORE, Gtk.TreeViewDropPosition.AFTER):
                 self._set_acceptable_drop(False)
                 self._library.set_status_message('')
                 return
@@ -447,8 +447,8 @@ class _CollectionArea(Gtk.ScrolledWindow):
         """Set the TreeView to accept drops if <acceptable> is True."""
         if acceptable:
             self._treeview.enable_model_drag_dest(
-                [('book', gtk.TARGET_SAME_APP, constants.LIBRARY_DRAG_BOOK_ID),
-                ('collection', gtk.TARGET_SAME_WIDGET, constants.LIBRARY_DRAG_COLLECTION_ID)],
+                [Gtk.TargetEntry.new('book', Gdk.TargetFlags.SAME_APP, constants.LIBRARY_DRAG_BOOK_ID),
+                Gtk.TargetEntry.new('collection', Gdk.TargetFlags.SAME_WIDGET, constants.LIBRARY_DRAG_COLLECTION_ID)],
                 Gdk.DragAction.MOVE)
         else:
             self._treeview.enable_model_drag_dest([], Gdk.DragAction.MOVE)

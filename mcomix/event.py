@@ -1,7 +1,7 @@
 """event.py - Event handling (keyboard, mouse, etc.) for the main window.
 """
 
-import urllib
+import urllib.request
 import gi
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, Gdk, GdkPixbuf
@@ -426,7 +426,7 @@ class EventHandler(object):
         # Register CTRL for scrolling only one page instead of two
         # pages in double page mode. This is mainly for mouse scrolling.
         # ---------------------------------------------------------------
-        if event.keyval in (gtk.keysyms.Control_L, gtk.keysyms.Control_R):
+        if event.keyval in (Gdk.KEY_Control_L, Gdk.KEY_Control_R):
             self._window.imagehandler.force_single_step = True
 
         # ----------------------------------------------------------------
@@ -434,7 +434,7 @@ class EventHandler(object):
         # or they will start fiddling with the thumbnail selector (bad).
         # ----------------------------------------------------------------
         if (event.keyval in (Gdk.KEY_Up, Gdk.KEY_Down,
-          Gdk.KEY_space, gtk.keysyms.KP_Enter, Gdk.KEY_KP_Up,
+          Gdk.KEY_space, Gdk.KEY_KP_Enter, Gdk.KEY_KP_Up,
           Gdk.KEY_KP_Down, Gdk.KEY_KP_Home, Gdk.KEY_KP_End,
           Gdk.KEY_KP_Page_Up, Gdk.KEY_KP_Page_Down) or
           (event.keyval == Gdk.KEY_Return and not
@@ -449,7 +449,7 @@ class EventHandler(object):
         # ---------------------------------------------------------------
         # Unregister CTRL for scrolling only one page in double page mode
         # ---------------------------------------------------------------
-        if event.keyval in (gtk.keysyms.Control_L, gtk.keysyms.Control_R):
+        if event.keyval in (Gdk.KEY_Control_L, Gdk.KEY_Control_R):
             self._window.imagehandler.force_single_step = False
 
     def escape_event(self):
@@ -600,7 +600,7 @@ class EventHandler(object):
 
         # Normalize URIs
         uris = [portability.normalize_uri(uri) for uri in uris]
-        paths = [urllib.url2pathname(uri).decode('utf-8') for uri in uris]
+        paths = [urllib.request.url2pathname(uri).decode('utf-8') for uri in uris]
 
         if len(paths) > 1:
             self._window.filehandler.open_file(paths)

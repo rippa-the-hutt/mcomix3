@@ -98,8 +98,8 @@ class PdfArchive(archive_base.BaseArchive):
                                  stderr=process.PIPE)
             try:
                 output = proc.stderr.read()
-                if output.startswith('mutool version '):
-                    version = output[15:].rstrip()
+                if output.startswith(b'mutool version '):
+                    version = output[15:].rstrip().decode('utf-8')
             finally:
                 proc.stderr.close()
                 proc.wait()

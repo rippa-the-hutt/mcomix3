@@ -11,14 +11,13 @@ from mcomix import log
 from mcomix import image_tools
 
 
-class Clipboard(gtk.Clipboard):
+class Clipboard:
 
     """The Clipboard takes care of all necessary copy-paste functionality
     """
 
     def __init__(self, window):
-        super(Clipboard, self).__init__(display=Gdk.Display.get_default(),
-            selection="CLIPBOARD")
+        self._clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
         self._window = window
 
     def copy(self, text, pixbuf):
@@ -105,7 +104,7 @@ class Clipboard(gtk.Clipboard):
         # text or the pixbuf.
         clipboard_targets = ("image/bmp",
                 "text/plain", "STRING", "UTF8_STRING")
-        self.set_with_data(
+        self._clipboard.set_with_data(
             [ (target, 0, 0) for target in clipboard_targets ],
             self._get_clipboard_content,
             self._clear_clipboard_content,

@@ -51,8 +51,8 @@ MISSING_IMAGE_ICON = None
 
 # Gtk.Dialog() can't be created at module level without Gtk.init(),
 # so we'll create the fallback lazily in get_missing_pixbuf()
-GTK_GDK_COLOR_BLACK = Gdk.color_parse('black')
-GTK_GDK_COLOR_WHITE = Gdk.color_parse('white')
+GTK_GDK_COLOR_BLACK = Gdk.RGBA(0, 0, 0, 1.0)
+GTK_GDK_COLOR_WHITE = Gdk.RGBA(1, 1, 1, 1.0)
 
 def get_missing_pixbuf():
     global MISSING_IMAGE_ICON
@@ -421,7 +421,7 @@ def load_pixbuf_data(imgdata):
         pixbuf = pil_to_pixbuf(Image.open(StringIO(imgdata)), keep_orientation=True)
     else:
         loader = GdkPixbuf.PixbufLoader()
-        loader.write(imgdata, len(imgdata))
+        loader.write(imgdata)
         loader.close()
         pixbuf = loader.get_pixbuf()
     return pixbuf
@@ -612,12 +612,12 @@ def get_supported_formats():
                 del supported_formats[name]
     else:
         supported_formats = {}
-        for format in GdkPixbuf.Pixbuf.get_formats():
-            name = format['name'].upper()
+        for fmt in GdkPixbuf.Pixbuf.get_formats():
+            name = fmt.get_name().upper()
             assert name not in supported_formats
             supported_formats[name] = (
-                format['mime_types'],
-                format['extensions'],
+                fmt.get_mime_types(),
+                fmt.get_extensions(),
             )
     return supported_formats
 
@@ -625,7 +625,7 @@ def get_supported_formats():
 SUPPORTED_IMAGE_REGEX = re.compile(r'\.(%s)$' %
                                    '|'.join(sorted(reduce(
                                        operator.add,
-                                       [map(re.escape, fmt[1]) for fmt
+                                       [list(map(re.escape, fmt[1])) for fmt
                                         in get_supported_formats().values()]
                                    ))), re.I)
 

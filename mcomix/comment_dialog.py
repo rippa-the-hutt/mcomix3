@@ -100,6 +100,11 @@ class _CommentsDialog(Gtk.Dialog):
         inbox.add(text_view)
 
         bg_color = text_view.get_default_attributes().bg_color
+        if hasattr(bg_color, 'red'):
+            # GTK3: bg_color is Gdk.RGBA, convert to Gdk.Color
+            bg_color = Gdk.Color(red=int(bg_color.red * 65535),
+                                  green=int(bg_color.green * 65535),
+                                  blue=int(bg_color.blue * 65535))
         outbox.modify_bg(Gtk.StateFlags.NORMAL, bg_color)
         tab_label = Gtk.Label(i18n.to_str(name))
         self._notebook.insert_page(page, tab_label)
