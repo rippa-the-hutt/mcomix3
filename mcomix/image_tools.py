@@ -623,11 +623,17 @@ def get_supported_formats():
         supported_formats = {}
         for fmt in GdkPixbuf.Pixbuf.get_formats():
             name = fmt.get_name().upper()
-            assert name not in supported_formats
-            supported_formats[name] = (
-                fmt.get_mime_types(),
-                fmt.get_extensions(),
-            )
+            if name in supported_formats:
+                old_mimes, old_exts = supported_formats[name]
+                supported_formats[name] = (
+                    old_mimes + fmt.get_mime_types(),
+                    old_exts + fmt.get_extensions(),
+                )
+            else:
+                supported_formats[name] = (
+                    fmt.get_mime_types(),
+                    fmt.get_extensions(),
+                )
     return supported_formats
 
 # Set supported image extensions regexp from list of supported formats.
