@@ -161,6 +161,13 @@ class _KeybindingManager(object):
         self._migrate_from_old_bindings()
         self._initialize()
 
+    @staticmethod
+    def _to_keytuple(result):
+        """Convert the result of Gtk.accelerator_parse() to a plain
+        (int, int) tuple so it has a consistent hash with tuples
+        created from Gdk.KEY_* and event.state int values."""
+        return (int(result[0]), int(result[1]))
+
     def register(self, name, bindings, callback, args=[], kwargs={}):
         """ Registers an action for a predefined keybinding name.
         @param name: Action name, defined in L{BINDING_INFO}.
@@ -176,7 +183,7 @@ class _KeybindingManager(object):
         # Load stored keybindings, or fall back to passed arguments
         keycodes = self._action_to_bindings[name]
         if keycodes == []:
-            keycodes = [Gtk.accelerator_parse(binding) for binding in bindings ]
+            keycodes = [self._to_keytuple(Gtk.accelerator_parse(binding)) for binding in bindings ]
 
         for keycode in keycodes:
             if keycode in self._binding_to_action.keys():
@@ -207,7 +214,7 @@ class _KeybindingManager(object):
         """
         assert name in BINDING_INFO, "'%s' isn't a valid keyboard action." % name
 
-        nb = Gtk.accelerator_parse(new_binding)
+        nb = self._to_keytuple(Gtk.accelerator_parse(new_binding))
         old_action_with_nb = self._binding_to_action.get(nb)
         if old_action_with_nb is not None:
             # The new key is already bound to an action, erase the action
@@ -216,7 +223,7 @@ class _KeybindingManager(object):
 
         if old_binding and name != old_action_with_nb:
             # The action already had a key that is now being replaced
-            ob = Gtk.accelerator_parse(old_binding)
+            ob = self._to_keytuple(Gtk.accelerator_parse(old_binding))
             self._binding_to_action[nb] = name
 
             # Remove action bound to the key.
@@ -238,7 +245,7 @@ class _KeybindingManager(object):
         """ Remove binding for an action """
         assert name in BINDING_INFO, "'%s' isn't a valid keyboard action." % name
 
-        ob = Gtk.accelerator_parse(binding)
+        ob = self._to_keytuple(Gtk.accelerator_parse(binding))
         self._action_to_bindings[name].remove(ob)
         self._binding_to_action.pop(ob)
 
@@ -299,7 +306,7 @@ class _KeybindingManager(object):
         for action in BINDING_INFO.keys():
             if action in stored_action_bindings:
                 bindings = [
-                    Gtk.accelerator_parse(keyname)
+                    self._to_keytuple(Gtk.accelerator_parse(keyname))
                     for keyname in stored_action_bindings[action] ]
                 self._action_to_bindings[action] = bindings
                 for binding in bindings:

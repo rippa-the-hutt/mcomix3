@@ -239,7 +239,9 @@ class MainWindow(Gtk.Window):
         self.connect('focus-out-event', self.lost_focus)
         self.connect('delete_event', self.close_program)
         self.connect('key_press_event', self._event_handler.key_press_event)
+        self._main_layout.connect('key_press_event', self._event_handler.key_press_event)
         self.connect('key_release_event', self._event_handler.key_release_event)
+        self._main_layout.connect('key_release_event', self._event_handler.key_release_event)
         self.connect('configure_event', self._event_handler.resize_event)
         self.connect('window-state-event', self._event_handler.window_state_event)
 
