@@ -27,7 +27,7 @@ def alphanumeric_sort(filenames):
         return (1, s.lower())
 
     # Filter out None values and sort
-    filenames = [f for f in filenames if f is not None]
+    filenames[:] = [f for f in filenames if f is not None]
     filenames.sort(key=lambda s: tuple(map(_format_substring, NUMERIC_REGEXP.findall(s))))
 
 def alphanumeric_compare(s1, s2):
