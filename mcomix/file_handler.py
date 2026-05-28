@@ -64,6 +64,10 @@ class FileHandler(object):
         self._condition = None
         #: Provides a list of available files/archives in the open directory.
         self._file_provider = None
+        #: Flag to force opening the previous archive at its last page
+        self._open_as_previous = False
+        #: Sequence counter to detect stale extraction callbacks
+        self._extraction_seq = 0
         #: Keeps track of the last read page in archives
         self.last_read_page = last_read_page.LastReadPage(backend.LibraryBackend())
         #: Regexp used for determining which archive files are images.
@@ -138,6 +142,7 @@ class FileHandler(object):
         return True
 
     def _archive_opened(self, image_files):
+        import traceback
         """ Called once the archive has been opened and its contents listed.
         """
 
@@ -160,27 +165,39 @@ class FileHandler(object):
                 else:
                     current_image_index = 0
             else:
-                last_image_index = self._get_index_for_page(self._start_page,
-                                                            len(image_files),
-                                                            self._current_file)
-                if self._start_page or \
-                   prefs['stored dialog choices'].get('resume-from-last-read-page', False):
-                    current_image_index = last_image_index
+                if self._open_as_previous:
+                    # When navigating to the previous book, always open at the last page
+                    current_image_index = max(0, len(image_files) - 1)
+                    last_image_index = current_image_index
                 else:
-                    # Don't switch to last page yet; since we have not asked
-                    # the user for confirmation yet.
-                    current_image_index = 0
-                if last_image_index != current_image_index:
-                    # Bump last page closer to the front of the extractor queue.
-                    self._window.set_page(last_image_index + 1)
+                    last_image_index = self._get_index_for_page(self._start_page,
+                                                                len(image_files),
+                                                                self._current_file)
+                    if self._start_page or \
+                       prefs['stored dialog choices'].get('resume-from-last-read-page', False):
+                        current_image_index = last_image_index
+                    else:
+                        # Don't switch to last page yet; since we have not asked
+                        # the user for confirmation yet.
+                        current_image_index = 0
+                    if last_image_index != current_image_index:
+                        # Bump last page closer to the front of the extractor queue.
+                        self._window.set_page(last_image_index + 1)
 
             self._window.set_page(current_image_index + 1)
+            self._open_as_previous = False
 
             if self.archive_type is not None:
                 self._extractor.extract()
                 if last_image_index != current_image_index and \
                    self._ask_goto_last_read_page(self._current_file, last_image_index + 1):
                     self._window.set_page(last_image_index + 1)
+
+            # Final safety: if we were in _open_as_previous mode, enforce last page
+            if self._start_page == -1:
+                last_page = max(1, len(image_files))
+                if self._window.imagehandler.get_current_page() != last_page:
+                    self._window.set_page(last_page)
 
             self.write_fileinfo_file()
 
@@ -282,6 +299,10 @@ class FileHandler(object):
 
         self._tmp_dir = tempfile.mkdtemp(prefix='mcomix.', suffix=os.sep)
         self._base_path = path
+        self._extraction_seq += 1
+        # Tag the extractor with the current gen BEFORE setup() starts the listing thread.
+        # _list_contents() will snapshot this as _gen_at_list before calling contents_listed.
+        self._extractor._pending_gen = self._extraction_seq
         try:
             self._condition = self._extractor.setup(self._base_path,
                                                 self._tmp_dir,
@@ -293,6 +314,12 @@ class FileHandler(object):
     def _listed_contents(self, archive, files):
 
         if not self.file_loading:
+            return
+        # Check for stale callback: if the extractor's _gen_at_list doesn't match
+        # our current _extraction_seq, this callback is from a previous extraction.
+        if getattr(archive, '_gen_at_list', None) != self._extraction_seq:
+            log.debug('Ignoring stale _listed_contents callback (gen_at_list=%s, current_seq=%s)',
+                      getattr(archive, '_gen_at_list', None), self._extraction_seq)
             return
         self.file_loading = False
 
@@ -495,6 +522,7 @@ class FileHandler(object):
             for path in reversed(files[:current_index]):
                 if archive_tools.archive_mime_type(path) is not None:
                     self._close()
+                    self._open_as_previous = True
                     self.open_file(path, -1, keep_fileprovider=True)
                     return True
 
@@ -551,6 +579,7 @@ class FileHandler(object):
             path = files[-1]
         else:
             path = self._file_provider.get_directory()
+        self._open_as_previous = True
         self.open_file(path, -1, keep_fileprovider=True)
         return True
 

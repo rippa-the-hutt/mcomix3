@@ -219,6 +219,9 @@ class Extractor(object):
         with self._condition:
             self._files = files
             self._contents_listed = True
+        # Snapshot the pending generation for stale callback detection.
+        # This is set by FileHandler._open_archive before starting the listing thread.
+        self._gen_at_list = getattr(self, '_pending_gen', None) or 0
         self.contents_listed(self, files)
 
 class ArchiveException(Exception):
