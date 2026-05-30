@@ -10,6 +10,23 @@ It is written in **Python 3** and uses **GTK+ 3** through the **PyGObject** bind
 
 ## Installation
 
+### From the Arch User Repository (AUR)
+
+Arch Linux users can install MComix3 directly from the [AUR](https://aur.archlinux.org/packages/mcomix3):
+
+```bash
+# Using yay
+yay -S mcomix3
+
+# Using paru
+paru -S mcomix3
+
+# Manual build (requires base-devel)
+git clone https://aur.archlinux.org/mcomix3.git
+cd mcomix3
+makepkg -si
+```
+
 ### From Git
 
 ```bash
