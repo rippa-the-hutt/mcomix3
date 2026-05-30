@@ -8,7 +8,6 @@ override_dh_auto_test:
 override_dh_fixperms:
 	dh_fixperms
 	chmod 755 debian/mcomix3/usr/share/mcomix3/mcomixstarter.py
-	chmod 755 debian/mcomix3/usr/bin/mcomix3
 
 override_dh_clean:
 	dh_clean
