@@ -1,4 +1,4 @@
-mcomix3 (3.5-1) unstable; urgency=medium
+mcomix3 (3.5) unstable; urgency=medium
 
   * Updated to version 3.5.
   * Python 3 / GTK3 port of MComix.
