@@ -1,0 +1,6 @@
+mcomix3 (3.5-1) unstable; urgency=medium
+
+  * Updated to version 3.5.
+  * Python 3 / GTK3 port of MComix.
+
+ -- Rippa The Hutt <iacoporippagmail@duck.com>  Sat, 30 May 2026 00:00:00 +0200

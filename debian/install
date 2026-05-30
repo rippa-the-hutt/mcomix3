@@ -1,0 +1,2 @@
+mcomixstarter.py usr/share/mcomix3/
+debian/mcomix3wrapper usr/bin/mcomix3
