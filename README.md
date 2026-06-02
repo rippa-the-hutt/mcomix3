@@ -26,6 +26,9 @@ git clone https://aur.archlinux.org/mcomix3.git
 cd mcomix3
 makepkg -si
 ```
+### Debian/Ubuntu
+
+Debian/Ubuntu users can install the software with the .deb package provided in [Releases](https://github.com/rippa-the-hutt/mcomix3/releases).
 
 ### From Git
 
