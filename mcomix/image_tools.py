@@ -390,7 +390,11 @@ def load_pixbuf(path):
     """ Loads a pixbuf from a given image file. """
     if prefs['animation mode'] != constants.ANIMATION_DISABLED:
         # Note that this branch ignores USE_PIL
-        pixbuf = GdkPixbuf.PixbufAnimation(path)
+        try:
+            pixbuf = GdkPixbuf.PixbufAnimation.new_from_file(path)
+        except TypeError:
+            # Fallback for older PyGObject where PixbufAnimation(path) works
+            pixbuf = GdkPixbuf.PixbufAnimation(path)
         if pixbuf.is_static_image():
             pixbuf = pixbuf.get_static_image()
         return pixbuf
@@ -398,7 +402,13 @@ def load_pixbuf(path):
         im = Image.open(path)
         pixbuf = pil_to_pixbuf(im, keep_orientation=True)
     else:
-        pixbuf = GdkPixbuf.Pixbuf.new_from_file(path)
+        try:
+            pixbuf = GdkPixbuf.Pixbuf.new_from_file(path)
+        except TypeError:
+            # Fallback to PIL if GDK pixbuf loading fails
+            # (e.g. on newer PyGObject / Python 3.14)
+            im = Image.open(path)
+            pixbuf = pil_to_pixbuf(im, keep_orientation=True)
     return pixbuf
 
 def load_pixbuf_size(path, width, height):
@@ -409,19 +419,26 @@ def load_pixbuf_size(path, width, height):
         im.draft(None, (width, height))
         pixbuf = pil_to_pixbuf(im, keep_orientation=True)
     else:
-        image_format, image_width, image_height = get_image_info(path)
-        # If we could not get the image info, still try to load
-        # the image to let GdkPixbuf raise the appropriate exception.
-        if (0, 0) == (image_width, image_height):
-            pixbuf = GdkPixbuf.Pixbuf.new_from_file(path)
-        # Work around GdkPixbuf bug: https://bugzilla.gnome.org/show_bug.cgi?id=735422
-        elif 'GIF' == image_format:
-            pixbuf = GdkPixbuf.Pixbuf.new_from_file(path)
-        else:
-            # Don't upscale if smaller than target dimensions!
-            if image_width <= width and image_height <= height:
-                width, height = image_width, image_height
-            pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(path, width, height)
+        try:
+            image_format, image_width, image_height = get_image_info(path)
+            # If we could not get the image info, still try to load
+            # the image to let GdkPixbuf raise the appropriate exception.
+            if (0, 0) == (image_width, image_height):
+                pixbuf = GdkPixbuf.Pixbuf.new_from_file(path)
+            # Work around GdkPixbuf bug: https://bugzilla.gnome.org/show_bug.cgi?id=735422
+            elif 'GIF' == image_format:
+                pixbuf = GdkPixbuf.Pixbuf.new_from_file(path)
+            else:
+                # Don't upscale if smaller than target dimensions!
+                if image_width <= width and image_height <= height:
+                    width, height = image_width, image_height
+                pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(path, width, height)
+        except TypeError:
+            # Fallback to PIL if GDK pixbuf loading fails
+            im = Image.open(path)
+            pixbuf = pil_to_pixbuf(im, keep_orientation=True)
+            pixbuf = fit_in_rectangle(pixbuf, width, height, scaling_quality=GdkPixbuf.InterpType.BILINEAR)
+            return pixbuf
     return fit_in_rectangle(pixbuf, width, height, scaling_quality=GdkPixbuf.InterpType.BILINEAR)
 
 def load_pixbuf_data(imgdata):
