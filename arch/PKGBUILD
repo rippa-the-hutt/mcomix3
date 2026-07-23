@@ -1,7 +1,7 @@
 # Maintainer: Rippa The Hutt <iacoporippagmail@duck.com>
 
 pkgname=mcomix3
-pkgver=3.5
+pkgver=3.6
 pkgrel=1
 pkgdesc="A user-friendly, customizable comic book image viewer (Python 3 / GTK3 port)"
 arch=('any')

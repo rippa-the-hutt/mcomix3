@@ -15,7 +15,7 @@ def mcomix_icons():
     sizes = ('16x16', '32x32', '48x48')
     pixbufs = [
         image_tools.load_pixbuf_data(
-            (files('mcomix.images') / (size + '/mcomix.png')).read_bytes()
+            (files('mcomix.images') / (size + '/mcomix3.png')).read_bytes()
         ) for size in sizes
     ]
 
