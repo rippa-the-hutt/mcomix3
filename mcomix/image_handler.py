@@ -134,7 +134,7 @@ class ImageHandler(object):
 
     def _cache_pixbuf(self, wanted):
         priority, index = wanted
-        log.debug('Caching page %', index + 1)
+        log.debug('Caching page %d', index + 1)
         self._get_pixbuf(index)
 
     def set_page(self, page_num):
@@ -433,7 +433,7 @@ class ImageHandler(object):
             # Asked for check only...
             return False
 
-        log.debug('Waiting for page %', page)
+        log.debug('Waiting for page %d', page)
         path = self.get_path_to_page(page)
         self._window.filehandler._wait_on_file(path)
         return True
