@@ -9,12 +9,17 @@ from mcomix import image_tools
 from mcomix import log
 
 def mcomix_icons():
-    """ Returns a list of pixbufs for the application icon
-    from a single high-resolution source. """
+    """ Returns a list of differently sized pixbufs for the
+    application icon, generated from a single high-resolution source. """
 
-    pixbufs = [image_tools.load_pixbuf_data(
+    large = image_tools.load_pixbuf_data(
         (files('mcomix.images') / 'mcomix-large.png').read_bytes()
-    )]
+    )
+    sizes = (16, 22, 24, 32, 48, 64, 96, 128, 256)
+    pixbufs = [
+        large.scale_simple(size, size, GdkPixbuf.InterpType.BILINEAR)
+        for size in sizes
+    ]
 
     return pixbufs
 
