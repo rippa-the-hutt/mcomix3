@@ -33,13 +33,12 @@ def get_data_patterns(directory, *patterns):
     os.chdir(olddir)
     return allfiles
 
-# Filter unnecessary image files. Replace wildcard pattern with actual files.
+# Collect image files for package_data. Replace wildcard pattern with actual files.
 images = get_data_patterns('mcomix/images', '*.png')
 images.remove('*.png')
 images.extend([ os.path.basename(img)
     for img in glob.glob(os.path.join(constants.BASE_PATH, 'mcomix/images', '*.png'))
-    if os.path.basename(img) not in
-        ('mcomix-large.png', )])
+    ])
 
 setuptools.setup(
     name = constants.APPNAME.lower(),
@@ -72,6 +71,7 @@ setuptools.setup(
         ('share/icons/hicolor/24x24/apps', ['mcomix/images/24x24/mcomix3.png']),
         ('share/icons/hicolor/32x32/apps', ['mcomix/images/32x32/mcomix3.png']),
         ('share/icons/hicolor/48x48/apps', ['mcomix/images/48x48/mcomix3.png']),
+        ('share/icons/hicolor/256x256/apps', ['mcomix/images/256x256/mcomix3.png']),
         ('share/icons/hicolor/16x16/mimetypes',
             ['mime/icons/16x16/application-x-cbz.png',
              'mime/icons/16x16/application-x-cbr.png',
