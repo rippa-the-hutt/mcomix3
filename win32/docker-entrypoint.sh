@@ -1,27 +1,29 @@
 #!/bin/bash
-#
-# Entry point for the MComix3 Windows build container.
-#
 set -e
-
 echo "=============================================="
 echo " MComix3 Windows Build Container"
 echo "=============================================="
-
-# Start Xvfb for headless Wine display
 rm -f /tmp/.X99-lock
 Xvfb :99 -screen 0 1024x768x16 &
 sleep 1
-
-# Extract build version
 VERSION=$(python3 -c "from mcomix.constants import VERSION; print(VERSION)" 2>/dev/null || \
-          grep 'VERSION' /src/mcomix/constants.py | head -1 | cut -d'"'"'" -f2)
+          grep 'VERSION' /src/mcomix/constants.py | head -1 | cut -d'"' -f2)
 echo "Building MComix3 version ${VERSION} for Windows..."
-
-# Run the PyInstaller build
+echo ""
+echo "--- Checking Python environment ---"
+wine C:\\Python311\\python.exe -c "
+import sys
+print('Python:', sys.version)
+try:
+    import gi
+    print('PyGObject:', gi.__version__)
+except ImportError:
+    print('Note: gi module not available (GTK support disabled)')
+    print('To add GTK support, pip install pygobject on the target Windows machine.')
+" 2>&1
 echo ""
 echo "--- Running PyInstaller ---"
-wine python -m PyInstaller \
+wine C:\\Python311\\python.exe -m PyInstaller \
     --paths /src \
     --onefile \
     --log-level WARN \
@@ -31,7 +33,6 @@ wine python -m PyInstaller \
     --windowed \
     --additional-hooks-dir win32 \
     --icon mcomix/images/mcomix.ico \
-    --collect-all gi \
     --collect-all mcomix \
     --collect-submodules PIL \
     --exclude-module PyQt5 \
@@ -43,7 +44,6 @@ wine python -m PyInstaller \
     --exclude-module IPython \
     --exclude-module notebook \
     win32/launcher.py
-
 echo ""
 echo "================================================"
 echo " Build complete!"
