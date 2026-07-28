@@ -42,24 +42,24 @@ RUN rm -rf /wine /tmp/.X99-lock && Xvfb :99 -screen 0 1024x768x16 & \
 
 # Install Python 3.8 for Windows (32-bit) using the official installer.
 # The installer-based approach worked reliably on Ubuntu 22.04 / Wine 6.
-# Use Python 3.9 embeddable package (zip) - extract on Linux, then bootstrap pip.
+# Use Python 3.10 embeddable package (zip) - extract on Linux, then bootstrap pip.
 # The EXE installer doesn't work in Wine 6.0.3, but the zip works natively.
-ARG PYTHON_VERSION=3.9.13
+ARG PYTHON_VERSION=3.10.11
 ARG PYTHON_ZIP=python-${PYTHON_VERSION}-embed-win32.zip
 
 RUN apt-get update && apt-get install -y --no-install-recommends unzip && \
     wget -qL https://www.python.org/ftp/python/${PYTHON_VERSION}/${PYTHON_ZIP} \
          -O /tmp/${PYTHON_ZIP} && \
-    mkdir -p /wine/drive_c/Python39 && \
-    unzip -q /tmp/${PYTHON_ZIP} -d /wine/drive_c/Python39 && \
+    mkdir -p /wine/drive_c/Python310 && \
+    unzip -q /tmp/${PYTHON_ZIP} -d /wine/drive_c/Python310 && \
     # Enable pip by modifying the _pth file
-    sed -i 's/^#import site/import site/' /wine/drive_c/Python39/python39._pth 2>/dev/null || true && \
+    sed -i 's/^#import site/import site/' /wine/drive_c/Python310/python310._pth 2>/dev/null || true && \
     rm /tmp/${PYTHON_ZIP}
 
-# Install pip using get-pip.py for Python 3.9
-RUN wget -qL https://bootstrap.pypa.io/pip/3.9/get-pip.py -O /tmp/get-pip.py && \
+# Install pip using get-pip.py for Python 3.10
+RUN wget -qL https://bootstrap.pypa.io/get-pip.py -O /tmp/get-pip.py && \
     rm -f /tmp/.X99-lock && Xvfb :99 -screen 0 1024x768x16 & sleep 1 && \
-    wine C:\\Python39\\python.exe /tmp/get-pip.py --no-warn-script-location && \
+    wine C:\\Python310\\python.exe /tmp/get-pip.py --no-warn-script-location && \
     wineserver -w && \
     rm /tmp/get-pip.py
 
@@ -83,7 +83,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends p7zip-full curl
         echo "WARNING: Could not download GTK3 runtime - will try pip install pygobject==3.48.2 anyway"; \
     fi
 # Add GTK3 runtime to Wine's PATH
-ENV WINEPATH="C:\Python39;C:\Python39\Scripts;C:\Program Files\GTK3-Runtime\bin"
+ENV WINEPATH="C:\Python310;C:\Python310\Scripts;C:\Program Files\GTK3-Runtime\bin"
 
 # Install PyGObject, PyInstaller, Pillow via pip
 # PyGObject 3.48.x has pre-built wheels for Python 3.9 on Windows
@@ -93,11 +93,19 @@ RUN rm -f /tmp/.X99-lock && Xvfb :99 -screen 0 1024x768x16 & sleep 1 && \
     wine python -m pip install \
         pyinstaller \
         pillow && \
-    # First check what wheels are available for pygobject
-    wine python -m pip install pygobject==3.48.2 2>&1 | head -20 || true && \
-    # If that failed, try without version pin
-    wine python -m pip install pygobject 2>&1 | head -20 || true && \
-    echo "pygobject installation handled"  && \
+    # Download pygobject wheel on Linux side (correct platform detection), then install in Wine
+    apt-get install -y --no-install-recommends python3-pip && \
+    python3 -m pip download --only-binary :all: --no-deps \
+        --python-version 3.10 --platform win32 --implementation cp \
+        --abi cp310 --dest /tmp/pygobject-wheel pygobject 2>/dev/null || true && \
+    for whl in /tmp/pygobject-wheel/pygobject*.whl; do \
+        if [ -f "$whl" ]; then \
+            cp "$whl" /wine/drive_c/ && \
+            wine python -m pip install "C:\\$(basename $whl)" && \
+            echo "pygobject installed from $(basename $whl)"; \
+        fi; \
+    done && \
+    rm -rf /tmp/pygobject-wheel /wine/drive_c/pygobject*.whl && \
     wineserver -w
 WORKDIR /src
 COPY win32/docker-entrypoint.sh /entrypoint.sh

@@ -22,6 +22,8 @@ echo "Building MComix3 version ${VERSION} for Windows..."
 echo ""
 echo "--- Running PyInstaller ---"
 wine python -m PyInstaller \
+    --paths /src \
+    --onefile \
     --log-level WARN \
     --name "MComix3-${VERSION}" \
     --noconfirm \
