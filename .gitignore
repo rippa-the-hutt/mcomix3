@@ -2,3 +2,5 @@
 .codexresume
 release/*
 
+dist/
+build/

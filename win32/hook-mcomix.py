@@ -1,149 +1,111 @@
+"""PyInstaller hook for MComix3 (Python 3 / GTK 3).
 
-import pkg_resources
-import glob
-import re
+This hook tells PyInstaller what data files, hidden imports, and
+binaries need to be bundled with the MComix3 executable.
+
+It is automatically discovered by PyInstaller when placed in the
+additional hooks directory (--additional-hooks-dir=win32).
+"""
+
+import sys
 import os
+from PyInstaller.utils.hooks import (
+    collect_data_files, collect_submodules, collect_dynamic_libs,
+    get_package_paths
+)
 
-from PyInstaller import is_win
-import PyInstaller.bindepend
-from hookutils import collect_submodules
+# ---------------------------------------------------------------------------
+# Data files
+# ---------------------------------------------------------------------------
 
+# Collect all images (*.png, *.ico) from mcomix.images package.
+datas = collect_data_files('mcomix.images', include_py_files=False)
 
-datas = []
+# Collect all translations (*.mo) from mcomix.messages package.
+datas += collect_data_files('mcomix.messages', include_py_files=False)
+
+# ---------------------------------------------------------------------------
+# Hidden imports – modules that PyInstaller cannot detect statically
+# ---------------------------------------------------------------------------
+
 hiddenimports = []
 
-# Add GTK DLLs.
+# All MComix submodules
+hiddenimports += collect_submodules('mcomix')
 
-gnome_dir = 'C:/Python27/Lib/site-packages/gnome'
-gnome_dll = lambda name: '%s/%s' % (gnome_dir, name)
+# GTK introspection modules used by MComix
+hiddenimports += [
+    'gi',
+    'gi.repository.Gtk',
+    'gi.repository.Gdk',
+    'gi.repository.GdkPixbuf',
+    'gi.repository.Gio',
+    'gi.repository.GLib',
+    'gi.repository.Pango',
+    'gi.repository.PangoCairo',
+    'gi.repository.cairo',
+]
 
-def gnome_dll_deps(dll, deps):
-    deps.add(dll)
-    imports = set(PyInstaller.bindepend.getImports(dll))
-    assemblies = PyInstaller.bindepend.getAssemblies(dll)
-    imports.update([a.getid() for a in assemblies])
-    for dll in tuple(imports):
-        dll = gnome_dll(dll)
-        if dll in deps:
-            continue
-        if os.path.exists(dll):
-            gnome_dll_deps(dll, deps)
+# Pillow image format plugins – these are loaded dynamically by PIL
+hiddenimports += [
+    'PIL.Image',
+    'PIL.ImageFile',
+    'PIL._imaging',
+    'PIL.BmpImagePlugin',
+    'PIL.GifImagePlugin',
+    'PIL.JpegImagePlugin',
+    'PIL.PngImagePlugin',
+    'PIL.TiffImagePlugin',
+    'PIL.IcoImagePlugin',
+    'PIL.WebPImagePlugin',
+]
 
-dll_list = set()
+# ---------------------------------------------------------------------------
+# Binaries – native DLLs that must be bundled alongside the exe
+# ---------------------------------------------------------------------------
 
-for dll in (
-    'libgdk_pixbuf-2.0-0.dll',
-    'libgthread-2.0-0.dll',
-    'libgtk-win32-2.0-0.dll',
-):
-    dll = gnome_dll(dll)
-    gnome_dll_deps(dll, dll_list)
+binaries = []
 
-for dll in sorted(dll_list):
-    datas.append((dll, '.'))
+# Collect GTK3 / PyGObject native DLLs
+if sys.platform == 'win32':
+    # Collect gi DLLs (libgobject, libglib, etc.)
+    try:
+        binaries += collect_dynamic_libs('gi')
+    except Exception:
+        pass
 
-# Add GTK locales.
+    # Collect GTK3 runtime DLLs from the Python site-packages/gnome directory
+    for pkg_name in ('gi', 'PyGObject', 'gtk', 'pygobject'):
+        try:
+            pkg_paths = get_package_paths(pkg_name)
+            for path in pkg_paths:
+                # Look for .dll files in the package directory
+                for root, dirs, files in os.walk(path):
+                    for f in files:
+                        if f.endswith('.dll'):
+                            binaries.append((
+                                os.path.join(root, f),
+                                os.path.relpath(root, os.path.dirname(path))
+                            ))
+        except Exception:
+            pass
 
-locale_dir = 'C:/Python27/Lib/site-packages/gnome/share/locale'
-for mo in glob.glob('%s/*/LC_MESSAGES/gtk20.mo' % locale_dir):
-    datas.append((mo, 'share/locale/%s' % os.path.dirname(mo[len(locale_dir)+1:])))
+# ---------------------------------------------------------------------------
+# External tool binaries (optional – bundled if present on the build machine)
+# ---------------------------------------------------------------------------
 
-# Add czipfile/Pillow documentation.
+def _collect_tool(tool_name, tool_subdir):
+    """If <tool_name> is found on PATH, add it to binaries."""
+    which = __import__('shutil', fromlist=['which']).which
+    exe = which(tool_name)
+    if exe is not None:
+        binaries.append((exe, tool_subdir))
 
-for pkgname in (
-    'czipfile',
-    'pillow',
-):
-    pkg = pkg_resources.require(pkgname)[0]
-    pkg_info = '\n'.join(pkg.get_metadata_lines('PKG-INFO'))
-    doc_dir = 'build/doc/%s' % pkgname
-    info_file = '%s/PKG-INFO.txt' % doc_dir
-    os.makedirs(doc_dir)
-    with open(info_file, 'w+') as fp:
-        fp.write(pkg_info)
-        fp.write('\n')
-    datas.append((info_file, 'doc/%s' % pkgname))
-
-# Add DLLs license and readme files.
-
-license_dir = 'C:/Python27/Lib/site-packages/gnome/license'
-doc_rx = re.compile(r'^(.*)\.(COPYING|LICENSE|README)(\..*)?$')
-lib_list = [os.path.basename(dll) for dll in dll_list]
-for entry in os.listdir(license_dir):
-    m = doc_rx.match(entry)
-    if m is None:
-        continue
-    lib_name = m.group(1).lower()
-    for lib in lib_list:
-        if -1 == lib.find(lib_name):
-            continue
-        datas.append(('%s/%s' % (license_dir, entry), 'doc'))
-        break
-
-datas.extend((
-    # Add MComix documentation.
-    ('README', 'doc/MComix'),
-    ('COPYING', 'doc/MComix'),
-    ('ChangeLog', 'doc/MComix'),
-    # Add Python documentation.
-    ('C:/Python27/LICENSE.tx', 'doc/Python'),
-    ('C:/Python27/NEWS.txt', 'doc/Python'),
-    ('C:/Python27/README.txt', 'doc/Python'),
-    # Add Cairo/GLib/GTK+/Pango runtime files.
-    ('C:/Python27/Lib/site-packages/gnome/etc/fonts', 'etc'),
-    ('C:/Python27/Lib/site-packages/gnome/etc/gtk-2.0', 'etc'),
-    ('C:/Python27/Lib/site-packages/gnome/etc/pango', 'etc'),
-    ('C:/Python27/Lib/site-packages/gnome/lib/gtk-2.0/2.10.0/engines/libwimp.dll', 'lib/gtk-2.0/2.10.0/engines'),
-    ('C:/Python27/Lib/site-packages/gnome/share/fonts', 'share'),
-    ('C:/Python27/Lib/site-packages/gnome/share/icons/hicolor', 'share/icons'),
-    ('C:/Python27/Lib/site-packages/gnome/share/themes/MS-Windows/gtk-2.0', 'share/themes/MS-Windows'),
-    ('C:/Python27/Lib/site-packages/gnome/fc-cache.exe', './'),
-    # Add Unrar DLL and documentation.
-    ('C:/Program Files/UnrarDLL/unrar.dll', '.'),
-    ('C:/Program Files/UnrarDLL/*.txt', 'doc/unrar'),
-    # Add MuPDF tools and documentation.
-    ('C:/Program Files/MuPDF/mudraw.exe', '.'),
-    ('C:/Program Files/MuPDF/mutool.exe', '.'),
-    ('C:/Program Files/MuPDF/*.txt', 'doc/mupdf'),
-    # Add 7z executable and documentation.
-    ('C:/Program Files/7-Zip/7z.exe', '.'),
-    ('C:/Program Files/7-Zip/7z.dll', '.'),
-    ('C:/Program Files/7-Zip/License.txt', 'doc/7z'),
-    # Override GTK configuration (fix fonts).
-    ('win32/gtkrc', 'etc/gtk-2.0'),
-))
-
-# Add w9xpopen.exe.
-
-datas.append(('C:/Python27/w9xpopen.exe', '.'))
-
-# Add PIL hidden imports.
-
-pil_modules = set(collect_submodules('PIL'))
-for unwanted in (
-    'PIL.DcxImagePlugin',
-    'PIL.EpsImagePlugin',
-    'PIL.FpxImagePlugin',
-    'PIL.GdImageFile',
-    'PIL.GimpGradientFile',
-    'PIL.GimpPaletteFile',
-    'PIL.GribStubImagePlugin',
-    'PIL.Hdf5StubImagePlugin',
-    'PIL.ImageQt',
-    'PIL.ImageTk',
-    'PIL.McIdasImagePlugin',
-    'PIL.MicImagePlugin',
-    'PIL.MpegImagePlugin',
-    'PIL.OleFileIO',
-    'PIL.PSDraw',
-    'PIL.PixarImagePlugin',
-    'PIL.SgiImagePlugin',
-    'PIL.SpiderImagePlugin',
-    'PIL.SunImagePlugin',
-    'PIL._imagingtk',
-):
-    if unwanted in pil_modules:
-        pil_modules.remove(unwanted)
-
-hiddenimports.extend(pil_modules)
-
+# Archive backends
+_collect_tool('unrar.exe', '.')
+_collect_tool('rar.exe', '.')
+_collect_tool('7z.exe', '.')
+_collect_tool('7z.dll', '.')
+_collect_tool('lha.exe', '.')
+_collect_tool('mudraw.exe', '.')
+_collect_tool('mutool.exe', '.')
