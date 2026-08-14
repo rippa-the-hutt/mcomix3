@@ -10,6 +10,10 @@ It is written in **Python 3** and uses **GTK+ 3** through the **PyGObject** bind
 
 ## Installation
 
+### Windows
+
+Windows is not supported by this project, as python3 dependencies are flimsy. You can check out [MComix-rs](https://github.com/rippa-the-hutt/mcomix-rs) for a very similar experience that works on Windows, too.
+
 ### From the Arch User Repository (AUR)
 
 Arch Linux users can install MComix3 directly from the [AUR](https://aur.archlinux.org/packages/mcomix3):
